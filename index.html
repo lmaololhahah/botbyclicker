@@ -588,6 +588,21 @@ const buildings = [
   { id: "b_prisma",  name: "Prisma",            description: "Prisma finns liksom överallt. Ingen vet riktigt vad Prisma är.", baseCost: 1000000000000, baseProduction: 12000000, unlockAt: 500000000000, icon: "loop", color: ICON_COLORS.teal },
 ];
 
+/* Difficulty pass: the game was flying by way too fast (players hitting
+   tens of millions per second within a couple hours), so buildings past
+   the first three and every upgrade got noticeably pricier, and unlock
+   thresholds got pushed back so new content takes longer to reach. The
+   very first purchase of Vaida, Tiina, and Stig is left untouched so the
+   opening minutes still feel the same - everything after that costs and
+   unlocks later. */
+const BUILDING_COST_SCALE = 4.5;
+const BUILDING_UNLOCK_SCALE = 3;
+buildings.forEach((b, i) => {
+  if (i < 3) return; // Vaida, Tiina, Stig keep their original first-time price
+  b.baseCost = Math.round(b.baseCost * BUILDING_COST_SCALE);
+  b.unlockAt = Math.round(b.unlockAt * BUILDING_UNLOCK_SCALE);
+});
+
 const manualUpgrades = [
   { id: "u_pencils",     name: "Vässade pennor",               description: "Skarpare stift, snabbare bläck. Dubblar Gul Wilma per klick.",  cost: 50,      icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickMultiplier", value: 2 },   unlock: { type: "totalPoints", value: 0 } },
   { id: "u_recess",      name: "Extra rast",                    description: "Fem extra minuter ute. +2 Gul Wilma per klick.",                cost: 150,     icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickFlatBonus", value: 2 },   unlock: { type: "totalPoints", value: 50 } },
@@ -623,6 +638,18 @@ const manualUpgrades = [
   { id: "u_gym",         name: "Snabbare bus",               description: "Plats för hela skolan att svettas samtidigt. +20% produktion.", cost: 800000000,     icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.2 },  unlock: { type: "totalPoints", value: 500000000 } },
   { id: "u_lindgren",    name: "Snabbare metro", description: "Hela mellanstadiet åker på klassresa ihop. +25% produktion.", cost: 8000000000,   icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.25 }, unlock: { type: "totalPoints", value: 5000000000 } },
 ];
+
+const UPGRADE_COST_SCALE = 5;
+const UPGRADE_UNLOCK_SCALE = 3;
+const UPGRADE_BUILDING_UNLOCK_SCALE = 1.5;
+manualUpgrades.forEach((u) => {
+  u.cost = Math.round(u.cost * UPGRADE_COST_SCALE);
+  if (u.unlock.type === "totalPoints") {
+    u.unlock.value = Math.round(u.unlock.value * UPGRADE_UNLOCK_SCALE);
+  } else if (u.unlock.type === "buildingOwned") {
+    u.unlock.value = Math.round(u.unlock.value * UPGRADE_BUILDING_UNLOCK_SCALE);
+  }
+});
 
 const UPGRADE_LOCAL_PHOTOS = {
   u_pencils: "pennor",
@@ -661,11 +688,11 @@ const UPGRADE_LOCAL_PHOTOS = {
 };
 
 const STAFF_BOOST_TIER_TEMPLATE = [
-  { suffix: "blir mera effektiv",     costMult: 6,   ownedReq: 1,  value: 1.15 },
-  { suffix: "blir mera effektiv II",  costMult: 30,  ownedReq: 8,  value: 1.3 },
-  { suffix: "blir mera effektiv III", costMult: 90,  ownedReq: 15, value: 1.5 },
-  { suffix: "blir mera effektiv IV",  costMult: 220, ownedReq: 25, value: 2 },
-  { suffix: "blir mera effektiv V",   costMult: 500, ownedReq: 40, value: 2.5 },
+  { suffix: "blir mera effektiv",     costMult: 12,   ownedReq: 2,  value: 1.15 },
+  { suffix: "blir mera effektiv II",  costMult: 65,   ownedReq: 12, value: 1.3 },
+  { suffix: "blir mera effektiv III", costMult: 200,  ownedReq: 22, value: 1.5 },
+  { suffix: "blir mera effektiv IV",  costMult: 500,  ownedReq: 35, value: 2 },
+  { suffix: "blir mera effektiv V",   costMult: 1200, ownedReq: 55, value: 2.5 },
 ];
 
 /* One short, per-tier flavor line so five upgrades in a row for the same
@@ -707,16 +734,16 @@ function generateStaffBoostUpgrades() {
 const VAIDA_CLICK_PER_OWNED = 0.004;
 
 const VAIDA_CLICK_TEMPLATE = [
-  { numeral: "I",    ownedReq: 1,  cost: 300,         value: 1.05 },
-  { numeral: "II",   ownedReq: 3,  cost: 2500,        value: 1.06 },
-  { numeral: "III",  ownedReq: 6,  cost: 15000,       value: 1.07 },
-  { numeral: "IV",   ownedReq: 10, cost: 90000,       value: 1.08 },
-  { numeral: "V",    ownedReq: 15, cost: 500000,      value: 1.09 },
-  { numeral: "VI",   ownedReq: 22, cost: 3000000,     value: 1.10 },
-  { numeral: "VII",  ownedReq: 30, cost: 20000000,    value: 1.10 },
-  { numeral: "VIII", ownedReq: 40, cost: 150000000,   value: 1.12 },
-  { numeral: "IX",   ownedReq: 55, cost: 1200000000,  value: 1.12 },
-  { numeral: "X",    ownedReq: 75, cost: 10000000000, value: 1.15 },
+  { numeral: "I",    ownedReq: 2,  cost: 900,          value: 1.05 },
+  { numeral: "II",   ownedReq: 5,  cost: 8000,         value: 1.06 },
+  { numeral: "III",  ownedReq: 9,  cost: 55000,        value: 1.07 },
+  { numeral: "IV",   ownedReq: 15, cost: 320000,       value: 1.08 },
+  { numeral: "V",    ownedReq: 22, cost: 1800000,      value: 1.09 },
+  { numeral: "VI",   ownedReq: 32, cost: 11000000,     value: 1.10 },
+  { numeral: "VII",  ownedReq: 45, cost: 75000000,     value: 1.10 },
+  { numeral: "VIII", ownedReq: 60, cost: 550000000,    value: 1.12 },
+  { numeral: "IX",   ownedReq: 80, cost: 4500000000,   value: 1.12 },
+  { numeral: "X",    ownedReq: 110, cost: 38000000000, value: 1.15 },
 ];
 
 function generateVaidaClickUpgrades() {
@@ -813,14 +840,14 @@ function makeFollowUpUpgrade(u, { suffix, roman, costMult, clickMultValue, flatB
 }
 function makeTierTwoUpgrade(u) {
   return makeFollowUpUpgrade(u, {
-    suffix: "_ii", roman: "II", costMult: 3.5,
+    suffix: "_ii", roman: "II", costMult: 5,
     clickMultValue: 1.5, flatBonusMult: 2.5, prodMultShare: 0.75,
     followUps: TIER_TWO_FOLLOWUPS, unlockFrom: u.id,
   });
 }
 function makeTierThreeUpgrade(uTwo) {
   return makeFollowUpUpgrade(uTwo, {
-    suffix: "_iii", roman: "III", costMult: 4,
+    suffix: "_iii", roman: "III", costMult: 6.5,
     clickMultValue: 1.4, flatBonusMult: 2, prodMultShare: 0.6,
     followUps: TIER_THREE_FOLLOWUPS, unlockFrom: uTwo.id,
   });
@@ -1139,7 +1166,7 @@ function buildingOwnedCount(id) { return state.buildingsOwned[id] || 0; }
 
 function buildingCost(building) {
   const owned = buildingOwnedCount(building.id);
-  return Math.ceil(building.baseCost * Math.pow(1.15, owned));
+  return Math.ceil(building.baseCost * Math.pow(1.17, owned));
 }
 
 function upgradeGlobalProductionMultiplier() {
@@ -1274,12 +1301,40 @@ function buyBuilding(id) {
   renderAll();
 }
 
+/* Tiny synthesized "pop" for buying an upgrade - no audio file needed,
+   just a quick pitch-dropping blip through the Web Audio API. Created
+   lazily on first use since browsers won't let audio start before a
+   user gesture, and buying something always follows a click, so this
+   is always safe to call. */
+let audioCtx = null;
+function playPopSound() {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    const ctx = audioCtx;
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(680, now);
+    osc.frequency.exponentialRampToValueAtTime(190, now + 0.1);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.32, now + 0.008);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.13);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.14);
+  } catch (e) { /* audio not available - fine, just skip it */ }
+}
+
 function buyUpgrade(id) {
   const u = upgradeById[id];
   if (!u || state.upgradesBought[id]) return;
   if (state.points < u.cost) return;
   state.points -= u.cost;
   state.upgradesBought[id] = true;
+  playPopSound();
   checkAchievements();
   renderAll();
 }
