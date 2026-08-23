@@ -400,6 +400,20 @@ body.reduce-motion .item-thumb svg{animation:none;}
   font-family:var(--font-display);font-weight:600;font-size:0.8rem;
   color:var(--gold-dim);margin:0.9rem 0 0.2rem;text-transform:uppercase;letter-spacing:0.06em;
 }
+#infoText{
+  flex:1;
+  min-height:12rem;
+  border:1px solid var(--line);
+  border-radius:0.6rem;
+  background:var(--cream);
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-size:0.85rem;
+  line-height:1.6;
+  padding:0.7rem 0.8rem;
+  box-shadow:0 2px 6px var(--shadow);
+  white-space:pre-wrap;
+}
 .staff-stat-row{display:flex;justify-content:space-between;align-items:center;padding:0.35rem 0.2rem;border-bottom:1px dashed var(--line);font-size:0.8rem;gap:0.5rem;}
 .staff-stat-row .ssr-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .staff-stat-row .ssr-owned{font-family:var(--font-num);color:var(--coral-dim);font-weight:600;flex:none;}
@@ -457,7 +471,7 @@ body.reduce-motion #achievementToast.show{animation:none;transform:translateY(0)
 
       <section class="click-stage">
         <div class="click-stage-inner">
-          <button id="mainClickable" title="Klicka på Botby">
+          <button id="mainClickable" title="Click på Botby">
             <svg class="botby-face" viewBox="0 0 200 200" aria-hidden="true">
               <line x1="150" y1="20" x2="150" y2="58" stroke="var(--cream)" stroke-width="4" stroke-linecap="round"/>
               <path class="flag-wave" d="M150 22 L184 31 L150 42 Z" fill="var(--coral)"/>
@@ -472,7 +486,7 @@ body.reduce-motion #achievementToast.show{animation:none;transform:translateY(0)
             <div id="floatLayer"></div>
           </button>
         </div>
-        <p id="clickableDescription">Klicka på Botby för Gul Wilma</p>
+        <p id="clickableDescription">Click på Botby för Gul Wilma</p>
         <div id="eventBanner" class="hidden"></div>
       </section>
     </div>
@@ -482,6 +496,7 @@ body.reduce-motion #achievementToast.show{animation:none;transform:translateY(0)
         <button class="tab-btn active" data-tab="store">Butik</button>
         <button class="tab-btn" data-tab="achievements">Minnen</button>
         <button class="tab-btn" data-tab="stats">Stats</button>
+        <button class="tab-btn" data-tab="info">Info</button>
       </div>
 
       <div class="tab-panel active" id="panel-store">
@@ -507,6 +522,11 @@ body.reduce-motion #achievementToast.show{animation:none;transform:translateY(0)
           <p>Starta om hela spelet från noll — all personal, alla uppgraderingar, minnen och Guldstjärnor försvinner permanent.</p>
           <button id="btnRestart" class="btn-primary btn-danger">Starta om spelet</button>
         </div>
+      </div>
+
+      <div class="tab-panel" id="panel-info">
+        <div class="section-label">Info</div>
+        <div id="infoText"></div>
       </div>
     </aside>
 
@@ -535,7 +555,7 @@ const GAME_SETTINGS = {
 
 const mainClickable = {
   name: "Botby",
-  description: "Klicka på Botby för Gul Wilma",
+  description: "Click på Botby för Gul Wilma",
   baseClickAmount: 1,
 };
 
@@ -595,8 +615,8 @@ const buildings = [
    very first purchase of Vaida, Tiina, and Stig is left untouched so the
    opening minutes still feel the same - everything after that costs and
    unlocks later. */
-const BUILDING_COST_SCALE = 4.5;
-const BUILDING_UNLOCK_SCALE = 3;
+const BUILDING_COST_SCALE = 7;
+const BUILDING_UNLOCK_SCALE = 4.5;
 buildings.forEach((b, i) => {
   if (i < 3) return; // Vaida, Tiina, Stig keep their original first-time price
   b.baseCost = Math.round(b.baseCost * BUILDING_COST_SCALE);
@@ -604,12 +624,12 @@ buildings.forEach((b, i) => {
 });
 
 const manualUpgrades = [
-  { id: "u_pencils",     name: "Vässade pennor",               description: "Skarpare stift, snabbare bläck. Dubblar Gul Wilma per klick.",  cost: 50,      icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickMultiplier", value: 2 },   unlock: { type: "totalPoints", value: 0 } },
-  { id: "u_recess",      name: "Extra rast",                    description: "Fem extra minuter ute. +2 Gul Wilma per klick.",                cost: 150,     icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickFlatBonus", value: 2 },   unlock: { type: "totalPoints", value: 50 } },
-  { id: "u_whiteboard",  name: "Ny skrivtavla",                 description: "Blankt och fräscht. Dubblar Gul Wilma per klick.",              cost: 500,     icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickMultiplier", value: 2 },   unlock: { type: "totalPoints", value: 300 } },
+  { id: "u_pencils",     name: "Vässade pennor",               description: "Skarpare stift, snabbare bläck. Dubblar Gul Wilma per click.",  cost: 50,      icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickMultiplier", value: 2 },   unlock: { type: "totalPoints", value: 0 } },
+  { id: "u_recess",      name: "Extra rast",                    description: "Fem extra minuter ute. +2 Gul Wilma per click.",                cost: 150,     icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickFlatBonus", value: 2 },   unlock: { type: "totalPoints", value: 50 } },
+  { id: "u_whiteboard",  name: "Ny skrivtavla",                 description: "Blankt och fräscht. Dubblar Gul Wilma per click.",              cost: 500,     icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickMultiplier", value: 2 },   unlock: { type: "totalPoints", value: 300 } },
   { id: "u_pizza",       name: "Pizza på fredag",                description: "Hela skolan äter gott samtidigt. +10% produktion.",             cost: 5000,    icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.1 }, unlock: { type: "totalPoints", value: 2000 } },
   { id: "u_firedrill",   name: "Brandövning",                   description: "Alla ute på tio minuter jämnt. +10% produktion.",   cost: 5000,    icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.1 },   unlock: { type: "totalPoints", value: 3000 } },
-  { id: "u_trip",        name: "Skolresa",                      description: "Hela klassen åker iväg och kommer hem glada. +10 Gul Wilma per klick.", cost: 15000, icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickFlatBonus", value: 10 }, unlock: { type: "buildingOwned", targetId: "b_oskar", value: 10 } },
+  { id: "u_trip",        name: "Skolresa",                      description: "Hela klassen åker iväg och kommer hem glada. +10 Gul Wilma per click.", cost: 15000, icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickFlatBonus", value: 10 }, unlock: { type: "buildingOwned", targetId: "b_oskar", value: 10 } },
   { id: "u_printer",     name: "Ny skrivare i kopieringsrummet",description: "Den håller faktiskt papper. +10% produktion.",                  cost: 50000,   icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.1 }, unlock: { type: "totalPoints", value: 20000 } },
   { id: "u_hallpass",    name: "Hallpass",                       description: "Går förbi alla köer. +10% produktion.",             cost: 50000,   icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.1 },   unlock: { type: "totalPoints", value: 30000 } },
   { id: "u_wifi",        name: "Läxfri vecka",                  description: "Ingen har läxor på en hel vecka. +15% produktion.",             cost: 500000,  icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.15 }, unlock: { type: "totalPoints", value: 200000 } },
@@ -620,7 +640,7 @@ const manualUpgrades = [
   { id: "u_schoolplay",  name: "Skolan slutar tidigare",                    description: "Hela skolan samlas i aulan. +15% produktion.",                  cost: 20000000,      icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.15 }, unlock: { type: "totalPoints", value: 10000000 } },
   { id: "u_yearbook",    name: "Megis",                         description: "Alla vill skriva en hälsning. +15% produktion.",    cost: 20000000,      icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.15 },   unlock: { type: "buildingOwned", targetId: "b_guni", value: 10 } },
   { id: "u_sports",      name: "Valfri dag",                    description: "Hela skolan tävlar utomhus. +20% produktion.",                  cost: 100000000,     icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.2 },  unlock: { type: "totalPoints", value: 50000000 } },
-  { id: "u_graduation",  name: "nya toaletter",                     description: "Mössorna åker på. +250 Gul Wilma per klick.",                    cost: 100000000,     icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickFlatBonus", value: 250 },   unlock: { type: "totalPoints", value: 60000000 } },
+  { id: "u_graduation",  name: "nya toaletter",                     description: "Mössorna åker på. +20% produktion.",                    cost: 100000000,     icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.2 },   unlock: { type: "totalPoints", value: 60000000 } },
   { id: "u_newroof",     name: "Nya datorer",                      description: "Äntligen tätt när det regnar. +15% produktion.",                cost: 500000000,     icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.15 }, unlock: { type: "totalPoints", value: 250000000 } },
   { id: "u_sportlov",    name: "Sportlov",                      description: "En hel vecka ledigt mitt i vintern. +20% produktion.",          cost: 500000000,     icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.2 },   unlock: { type: "totalPoints", value: 300000000 } },
   { id: "u_paskvlov",    name: "Påsklov",                       description: "En vecka ledigt runt påsk ger ny fart åt hela skolan. +15% produktion.", cost: 700000000, icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.15 }, unlock: { type: "totalPoints", value: 400000000 } },
@@ -629,19 +649,19 @@ const manualUpgrades = [
   { id: "u_robotics",    name: "Kortare lektioner",                  description: "Eleverna bygger egna robotar. +25% produktion.",                cost: 3000000000,    icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.25 }, unlock: { type: "buildingOwned", targetId: "b_kent", value: 15 } },
   { id: "u_aiassistant", name: "Längre lunch", description: "Alla klassrum får hjälp dygnet runt. +20% produktion.", cost: 3000000000, icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.2 }, unlock: { type: "totalPoints", value: 2000000000 } },
   { id: "u_newgym",      name: "Nya bord",               description: "Plats för hela skolan på en gång. +20% produktion.",            cost: 20000000000,   icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.2 },  unlock: { type: "totalPoints", value: 15000000000 } },
-  { id: "u_museum",      name: "Nya stolar",                    description: "Skolans historia på en vägg. +2000 Gul Wilma per klick.",        cost: 20000000000,   icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickFlatBonus", value: 2000 },  unlock: { type: "totalPoints", value: 18000000000 } },
+  { id: "u_museum",      name: "Nya stolar",                    description: "Skolans historia på en vägg. +28% produktion.",        cost: 20000000000,   icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.28 },  unlock: { type: "totalPoints", value: 18000000000 } },
   { id: "u_timecapsule", name: "Skolavslutning",                    description: "Grävs ner för framtiden. +30% produktion.",                     cost: 150000000000,  icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.3 },  unlock: { type: "buildingOwned", targetId: "b_maija", value: 10 } },
-  { id: "u_legacy",      name: "Sommarlov",                    description: "Botby går till historien. Tredubblar Gul Wilma per klick.",     cost: 150000000000,  icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickMultiplier", value: 3 },   unlock: { type: "totalPoints", value: 100000000000 } },
+  { id: "u_legacy",      name: "Sommarlov",                    description: "Botby går till historien. +35% produktion, en permanent påminnelse om allt ni byggt ihop.",     cost: 150000000000,  icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.35 },   unlock: { type: "totalPoints", value: 100000000000 } },
   { id: "u_bibliotek",   name: "Nytt klassrum",               description: "Tysta hörnet blir mysigare. +18% produktion.",                  cost: 4000000,       icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.18 }, unlock: { type: "totalPoints", value: 2500000 } },
-  { id: "u_concert",     name: "unblocked spel på dator",                  description: "Alla trycker upp något att spela. +30 Gul Wilma per klick.",   cost: 9000000,       icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickFlatBonus", value: 30 },   unlock: { type: "totalPoints", value: 6000000 } },
-  { id: "u_classphoto",  name: "Klassfoto",                    description: "Alla ler på kommando, tredje försöket. Dubblar Gul Wilma per klick.", cost: 60000000,   icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickMultiplier", value: 2 },   unlock: { type: "totalPoints", value: 40000000 } },
+  { id: "u_concert",     name: "unblocked spel på dator",                  description: "Alla trycker upp något att spela. +30 Gul Wilma per click.",   cost: 9000000,       icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickFlatBonus", value: 30 },   unlock: { type: "totalPoints", value: 6000000 } },
+  { id: "u_classphoto",  name: "Klassfoto",                    description: "Alla ler på kommando, tredje försöket. +22% produktion.", cost: 60000000,   icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.22 },   unlock: { type: "totalPoints", value: 40000000 } },
   { id: "u_gym",         name: "Snabbare bus",               description: "Plats för hela skolan att svettas samtidigt. +20% produktion.", cost: 800000000,     icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.2 },  unlock: { type: "totalPoints", value: 500000000 } },
   { id: "u_lindgren",    name: "Snabbare metro", description: "Hela mellanstadiet åker på klassresa ihop. +25% produktion.", cost: 8000000000,   icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.25 }, unlock: { type: "totalPoints", value: 5000000000 } },
 ];
 
-const UPGRADE_COST_SCALE = 5;
-const UPGRADE_UNLOCK_SCALE = 3;
-const UPGRADE_BUILDING_UNLOCK_SCALE = 1.5;
+const UPGRADE_COST_SCALE = 8;
+const UPGRADE_UNLOCK_SCALE = 4.5;
+const UPGRADE_BUILDING_UNLOCK_SCALE = 2;
 manualUpgrades.forEach((u) => {
   u.cost = Math.round(u.cost * UPGRADE_COST_SCALE);
   if (u.unlock.type === "totalPoints") {
@@ -750,7 +770,7 @@ function generateVaidaClickUpgrades() {
   return VAIDA_CLICK_TEMPLATE.map((tier, idx) => ({
     id: `u_vaida_click_${idx + 1}`,
     name: `Vaida klickar hårdare ${tier.numeral}`,
-    description: `Vaida lär Botby ett nytt trick. +${Math.round((tier.value - 1) * 100)}% Gul Wilma per klick (kumulativt).`,
+    description: `Vaida lär Botby ett nytt trick. +${Math.round((tier.value - 1) * 100)}% Gul Wilma per click (kumulativt).`,
     cost: tier.cost,
     icon: "tapper",
     color: ICON_COLORS.coral,
@@ -868,11 +888,11 @@ const POINT_MILESTONES = [
   [1000000000000, "1 biljon Gul Wilma", "Tjäna 1 000 000 000 000 Gul Wilma totalt."],
 ];
 const CLICK_MILESTONES = [
-  [1, "Första klicket", "Klicka på Botby för första gången."],
-  [100, "100 klick", "Klicka 100 gånger."],
-  [1000, "1 000 klick", "Klicka 1 000 gånger."],
-  [10000, "10 000 klick", "Klicka 10 000 gånger."],
-  [100000, "100 000 klick", "Klicka 100 000 gånger."],
+  [1, "Första clicket", "Click på Botby för första gången."],
+  [100, "100 click", "Click 100 gånger."],
+  [1000, "1 000 click", "Click 1 000 gånger."],
+  [10000, "10 000 click", "Click 10 000 gånger."],
+  [100000, "100 000 click", "Click 100 000 gånger."],
 ];
 const TOTAL_UPGRADES_COUNT = manualUpgrades.length * 3 + buildings.length * STAFF_BOOST_TIER_TEMPLATE.length + VAIDA_CLICK_TEMPLATE.length;
 const UPGRADE_MILESTONES = [
@@ -1166,7 +1186,22 @@ function buildingOwnedCount(id) { return state.buildingsOwned[id] || 0; }
 
 function buildingCost(building) {
   const owned = buildingOwnedCount(building.id);
-  return Math.ceil(building.baseCost * Math.pow(1.17, owned));
+  return Math.ceil(building.baseCost * Math.pow(1.19, owned));
+}
+
+/* Multiplicative upgrades compound fast - a handful of "+20% production"
+   upgrades bought together can snowball into something way stronger
+   than any single one felt like it should be. This softens the combined
+   bonus once it passes +200% (i.e. the raw product goes above 3x):
+   everything below that line behaves exactly as before, and only the
+   excess above it grows slower, so no single upgrade purchase ever
+   feels overpowered on its own, but a big pile of them still adds up
+   over time - just more gently. */
+function softenStackedBonus(rawMultiplier) {
+  const bonus = rawMultiplier - 1;
+  const softCap = 2; // +200% combined before softening kicks in
+  if (bonus <= softCap) return rawMultiplier;
+  return 1 + softCap + Math.pow(bonus - softCap, 0.65);
 }
 
 function upgradeGlobalProductionMultiplier() {
@@ -1175,7 +1210,7 @@ function upgradeGlobalProductionMultiplier() {
     const u = upgradeById[id];
     if (u && u.effect.type === "globalProductionMultiplier") mult *= u.effect.value;
   });
-  return mult;
+  return softenStackedBonus(mult);
 }
 
 function upgradeBuildingMultiplier(buildingId) {
@@ -1243,6 +1278,7 @@ function computeClickValue() {
     const u = upgradeById[id];
     if (u && u.effect.type === "clickMultiplier") mult *= u.effect.value;
   });
+  mult = softenStackedBonus(mult);
   mult *= achievementRewardMultiplier("clickMultiplier");
   mult *= 1 + buildingOwnedCount("b_vaida") * VAIDA_CLICK_PER_OWNED;
   mult *= 1 + state.bonds * 0.02;
@@ -1280,12 +1316,134 @@ function addPoints(amount) {
   state.totalPointsEarned += amount;
 }
 
+/* Three small synthesized sound effects - no audio files needed, just
+   quick blips through the Web Audio API. The context is created lazily
+   on first use since browsers won't let audio start before a user
+   gesture, and every one of these always follows a click, so that's
+   never an issue. Each is shaped differently (waveform, pitch curve,
+   and duration) so hiring, upgrading, and clicking Botby feel distinct
+   from each other instead of one sound doing triple duty. */
+let audioCtx = null;
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+
+/* One shared "soft pluck" helper used by all three effects below: a
+   sine tone with a warm, quiet octave-up shimmer layered underneath,
+   gentle attack and natural decay. Swapping the earlier square-wave
+   tick and sharper envelopes for this made every sound noticeably
+   calmer - closer to a kalimba or soft marimba note than a UI beep,
+   which holds up much better after hundreds of repeats. */
+function playTone(ctx, freq, startTime, opts) {
+  opts = opts || {};
+  const duration = opts.duration || 0.22;
+  const peak = opts.peak || 0.2;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(freq, startTime);
+  gain.gain.setValueAtTime(0.0001, startTime);
+  gain.gain.exponentialRampToValueAtTime(peak, startTime + Math.min(0.03, duration * 0.2));
+  gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(startTime);
+  osc.stop(startTime + duration + 0.03);
+
+  const shimmer = ctx.createOscillator();
+  const shimmerGain = ctx.createGain();
+  shimmer.type = "sine";
+  shimmer.frequency.setValueAtTime(freq * 2, startTime);
+  shimmerGain.gain.setValueAtTime(0.0001, startTime);
+  shimmerGain.gain.exponentialRampToValueAtTime(peak * 0.16, startTime + 0.025);
+  shimmerGain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration * 0.75);
+  shimmer.connect(shimmerGain);
+  shimmerGain.connect(ctx.destination);
+  shimmer.start(startTime);
+  shimmer.stop(startTime + duration + 0.03);
+}
+
+/* Clicking Botby: a single soft, quiet pluck - light enough to stay
+   pleasant through a long clicking session instead of getting tiring. */
+/* Clicking Botby: an actual mechanical "click" instead of a musical
+   note - a short burst of filtered noise (the "tick") plus a tiny,
+   almost subliminal low thump underneath (the "body" of a real mouse
+   or button click), both over in about 25ms. No pitch, no melody -
+   just a crisp physical-feeling snap that stays comfortable through
+   hundreds of repeats. */
+function playClickSound() {
+  try {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+
+    const duration = 0.022;
+    const bufferSize = Math.max(1, Math.floor(ctx.sampleRate * duration));
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+    }
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+    const filter = ctx.createBiquadFilter();
+    filter.type = "bandpass";
+    filter.frequency.value = 2100;
+    filter.Q.value = 0.7;
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0.16, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+    noise.connect(filter);
+    filter.connect(noiseGain);
+    noiseGain.connect(ctx.destination);
+    noise.start(now);
+    noise.stop(now + duration + 0.01);
+
+    const thump = ctx.createOscillator();
+    const thumpGain = ctx.createGain();
+    thump.type = "sine";
+    thump.frequency.setValueAtTime(160, now);
+    thumpGain.gain.setValueAtTime(0.0001, now);
+    thumpGain.gain.exponentialRampToValueAtTime(0.055, now + 0.002);
+    thumpGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
+    thump.connect(thumpGain);
+    thumpGain.connect(ctx.destination);
+    thump.start(now);
+    thump.stop(now + 0.035);
+  } catch (e) { /* audio not available - fine, just skip it */ }
+}
+
+/* Buying an upgrade: a gentle two-note rise (C5 -> E5). */
+function playPopSound() {
+  try {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+    playTone(ctx, 523.25, now, { duration: 0.18, peak: 0.2 });        // C5
+    playTone(ctx, 659.25, now + 0.055, { duration: 0.22, peak: 0.19 }); // E5
+  } catch (e) { /* audio not available - fine, just skip it */ }
+}
+
+/* Hiring personal: a slower, fuller three-note major chime (C5-E5-G5) -
+   a bigger commitment than an upgrade gets a richer, more lingering
+   sound, but still soft rather than triumphant. */
+function playHireSound() {
+  try {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+    playTone(ctx, 523.25, now, { duration: 0.26, peak: 0.19 });        // C5
+    playTone(ctx, 659.25, now + 0.09, { duration: 0.28, peak: 0.19 }); // E5
+    playTone(ctx, 783.99, now + 0.19, { duration: 0.36, peak: 0.2 });  // G5
+  } catch (e) { /* audio not available - fine, just skip it */ }
+}
+
 function doClick() {
   const val = computeClickValue();
   addPoints(val);
   state.totalClicks += 1;
   spawnFloatingNumber(val);
   bounceMainClickable();
+  playClickSound();
   checkAchievements();
   renderTopStats();
 }
@@ -1297,35 +1455,9 @@ function buyBuilding(id) {
   if (state.points < cost) return;
   state.points -= cost;
   state.buildingsOwned[id] = buildingOwnedCount(id) + 1;
+  playHireSound();
   checkAchievements();
   renderAll();
-}
-
-/* Tiny synthesized "pop" for buying an upgrade - no audio file needed,
-   just a quick pitch-dropping blip through the Web Audio API. Created
-   lazily on first use since browsers won't let audio start before a
-   user gesture, and buying something always follows a click, so this
-   is always safe to call. */
-let audioCtx = null;
-function playPopSound() {
-  try {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === "suspended") audioCtx.resume();
-    const ctx = audioCtx;
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(680, now);
-    osc.frequency.exponentialRampToValueAtTime(190, now + 0.1);
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.32, now + 0.008);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.13);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.14);
-  } catch (e) { /* audio not available - fine, just skip it */ }
 }
 
 function buyUpgrade(id) {
@@ -1601,17 +1733,13 @@ function renderStats() {
     const owned = buildingOwnedCount(b.id);
     return (!best || owned > best.owned) ? { name: b.name, owned } : best;
   }, null);
-  const clicksPerMinute = runMs > 60000 ? (state.totalClicks / (runMs / 60000)) : state.totalClicks;
-  const avgPerClick = state.totalClicks > 0 ? state.totalPointsEarned / state.totalClicks : 0;
 
   const rows = [
     ["Läsåret startade", fmtDate(state.createdAt)],
     ["Tid spelad", fmtDuration(runMs)],
     ["Gul Wilma totalt", fmtNumber(state.totalPointsEarned)],
     ["Gul Wilma just nu", fmtNumber(state.points)],
-    ["Antal klick", fmtNumber(state.totalClicks)],
-    ["Klick per minut", fmtNumber(clicksPerMinute)],
-    ["Snitt per klick", fmtNumber(avgPerClick)],
+    ["Antal click", fmtNumber(state.totalClicks)],
     ["Personal", fmtNumber(Object.values(state.buildingsOwned).reduce((a,b)=>a+b,0))],
     ["Mest anställda", mostOwnedBuilding && mostOwnedBuilding.owned > 0 ? `${mostOwnedBuilding.name} (${fmtNumber(mostOwnedBuilding.owned)})` : "—"],
     ["Uppgraderingar köpta", `${fmtNumber(Object.keys(state.upgradesBought).length)} / ${allUpgrades.length}`],
@@ -1659,7 +1787,7 @@ function renderImageDebugPanel() {
   const entries = [
     ...buildings.map((b) => [b.id, b.name]),
     ...manualUpgrades.map((u) => [u.id, u.name]),
-    ["clickerbutton", "Klickknappen"],
+    ["clickerbutton", "Clickknappen"],
     ["background", "Bakgrund"],
   ];
 
@@ -1692,6 +1820,7 @@ function renderAll() {
   renderUpgrades();
   renderAchievements();
   renderStats();
+  renderInfo();
 }
 
 function setupTabs() {
@@ -1744,6 +1873,36 @@ function setupRestart() {
 
 const DARK_MODE_KEY = "botbyClickerDarkMode";
 
+/* The Info tab shows this text as-is - it's fixed in the code, not an
+   in-game text box, so players can't type or save arbitrary content
+   into it. To change what it says, edit the string below directly and
+   re-save the file; that's the only way it changes. Line breaks in the
+   string show up as line breaks on screen. */
+const INFO_NOTE = `# Om Botby Clicker
+
+**Botby Clicker** är ett enkelt clicker-spel där ditt mål är att klicka, tjäna **Gul Wilma** och köpa upgrades för att få ännu mer.
+
+## Nya läsår
+
+När du har kommit tillräckligt långt kan du starta ett **nytt läsår**. Då får du **Guldstjärnor**, som ger en permanent bonus på Gul Wilma.
+
+Varje Guldstjärna ger **+2% på all Gul Wilma permanent**,
+
+### Credits & Copyright
+
+Botby Clicker är ett självständigt spel gjort för skojs skull. All originalkod, grafik, namn och annat originalinnehåll tillhör skaparen av spelet om inget annat anges.
+
+**© 2026 Botby Clicker. Alla rättigheter förbehållna.**
+
+Kopiera, distribuera eller använd inte spelets originalinnehåll som om det vore ditt eget.
+
+Tack för att du spelar **Botby Clicker** ❤️`;
+
+function renderInfo() {
+  const el = document.getElementById("infoText");
+  if (el) el.textContent = INFO_NOTE;
+}
+
 function setupDarkMode() {
   const btn = document.getElementById("btnDarkMode");
   let dark = false;
@@ -1761,10 +1920,22 @@ function applyDarkMode(dark) {
   document.getElementById("btnDarkMode").textContent = dark ? "☀️" : "🌙";
 }
 
+/* Ticks by real elapsed wall-clock time rather than assuming the fixed
+   interval always fires on schedule. Background tabs get their timers
+   throttled by the browser (often to ~once a second, sometimes much
+   less often), so using the actual gap between ticks - instead of a
+   flat GAME_SETTINGS.tickIntervalMs - means Gul Wilma keeps accruing
+   correctly at the right rate even while the tab isn't focused, instead
+   of stalling. Capped at a few hours per jump just so a laptop left
+   asleep for days doesn't hand out an unbounded pile of currency. */
+let lastTickAt = Date.now();
+const MAX_TICK_GAP_MS = 4 * 60 * 60 * 1000;
 function tick() {
-  const dtSec = GAME_SETTINGS.tickIntervalMs / 1000;
+  const now = Date.now();
+  const dtSec = Math.min(now - lastTickAt, MAX_TICK_GAP_MS) / 1000;
+  lastTickAt = now;
   const pps = computePointsPerSecond();
-  if (pps > 0) addPoints(pps * dtSec);
+  if (pps > 0 && dtSec > 0) addPoints(pps * dtSec);
   checkAchievements();
   renderTopStats();
 }
@@ -1780,11 +1951,18 @@ async function init() {
   applyBackgroundPhoto();
   renderAll();
 
+  lastTickAt = Date.now();
   setInterval(tick, GAME_SETTINGS.tickIntervalMs);
   setInterval(() => { renderBuildings(); renderUpgrades(); renderStats(); }, 1000);
   setInterval(saveGame, GAME_SETTINGS.autosaveIntervalSec * 1000);
   window.addEventListener("beforeunload", saveGame);
-  document.addEventListener("visibilitychange", () => { if (document.hidden) saveGame(); });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      saveGame();
+    } else {
+      tick(); // catch up immediately on returning to the tab
+    }
+  });
 }
 
 document.addEventListener("DOMContentLoaded", init);
