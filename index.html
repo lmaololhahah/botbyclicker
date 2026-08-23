@@ -1414,31 +1414,6 @@ function playClickSound() {
   } catch (e) { /* audio not available - fine, just skip it */ }
 }
 
-/* Buying an upgrade: a gentle two-note rise (C5 -> E5). */
-/* Buying an upgrade: a quick two-note rise (C5 -> E5) - shortened to a
-   snappy little click-ish blip rather than a lingering chime, so it
-   doesn't overstay its welcome when buying several upgrades in a row. */
-function playPopSound() {
-  try {
-    const ctx = getAudioCtx();
-    const now = ctx.currentTime;
-    playTone(ctx, 523.25, now, { duration: 0.06, peak: 0.2 });         // C5
-    playTone(ctx, 659.25, now + 0.03, { duration: 0.07, peak: 0.19 }); // E5
-  } catch (e) { /* audio not available - fine, just skip it */ }
-}
-
-/* Hiring personal: a quick three-note major chime (C5-E5-G5) - still a
-   touch fuller than the upgrade sound since it's a bigger commitment,
-   but kept short and snappy rather than a slow lingering tune. */
-function playHireSound() {
-  try {
-    const ctx = getAudioCtx();
-    const now = ctx.currentTime;
-    playTone(ctx, 523.25, now, { duration: 0.07, peak: 0.19 });         // C5
-    playTone(ctx, 659.25, now + 0.03, { duration: 0.07, peak: 0.19 });  // E5
-    playTone(ctx, 783.99, now + 0.06, { duration: 0.09, peak: 0.2 });   // G5
-  } catch (e) { /* audio not available - fine, just skip it */ }
-}
 
 function doClick() {
   const val = computeClickValue();
