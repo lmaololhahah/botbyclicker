@@ -1,0 +1,2444 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Botby Clicker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-deep:#f3efe6;
+  --bg-deep-2:#e9e3d4;
+  --bg-panel:#fbf9f4;
+  --bg-panel-2:#efeadd;
+  --bg-panel-3:#e4ddcc;
+  --gold:#ffb703;
+  --gold-soft:#f2b93d;
+  --gold-dim:#c07f0a;
+  --coral:#ff5d6c;
+  --coral-dim:#e0384a;
+  --teal:#12d6a0;
+  --teal-dim:#0a9770;
+  --blue:#4cc9f0;
+  --blue-dim:#2a94b8;
+  --purple:#b185f5;
+  --purple-dim:#8257c9;
+  --pink:#ff8fc7;
+  --pink-dim:#e05fa0;
+  --cream:#fdfbf7;
+  --ink:#2b2118;
+  --line:rgba(43,33,24,0.15);
+  --shadow:rgba(30,20,10,0.16);
+  --chalkboard:#2e4a3c;
+  --chalkboard-dark:#182a21;
+  --wood:#e6d3ae;
+  --wood-dark:#cdae7c;
+  --bg-photo:none;
+  --font-display:'Fredoka', sans-serif;
+  --font-hand:'Fredoka', sans-serif;
+  --font-body:'Nunito', sans-serif;
+  --font-num:'Space Grotesk', monospace;
+}
+body.dark-mode{
+  --bg-deep:#181a17;
+  --bg-deep-2:#101210;
+  --bg-panel:#1f221e;
+  --bg-panel-2:#262a23;
+  --bg-panel-3:#2e332a;
+  --cream:#22251f;
+  --ink:#efe9db;
+  --line:rgba(239,233,219,0.14);
+  --shadow:rgba(0,0,0,0.5);
+  --wood:#4a3d27;
+  --wood-dark:#332a1a;
+}
+*{box-sizing:border-box;}
+html,body{
+  height:100%;
+  margin:0;
+  overflow:hidden;
+  background:var(--bg-deep);
+  font-family:var(--font-body);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit;}
+::selection{background:var(--coral);color:#fff;}
+*{scrollbar-width:thin;scrollbar-color:var(--gold-dim) transparent;}
+*::-webkit-scrollbar{width:9px;height:9px;}
+*::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:6px;}
+*::-webkit-scrollbar-track{background:transparent;}
+.hidden{display:none !important;}
+#app{
+  height:100vh;
+  height:100dvh;
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(18,214,160,0.10), transparent 38%),
+    radial-gradient(circle at 90% 85%, rgba(177,133,245,0.09), transparent 42%),
+    radial-gradient(circle at 5% 90%, rgba(255,143,199,0.08), transparent 38%),
+    linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-deep-2) 100%);
+  transition:background .2s ease;
+}
+#app.has-bg-photo{
+  background-image: var(--bg-photo);
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  background-attachment:fixed;
+}
+body.dark-mode #app.has-bg-photo{
+  background-image: var(--bg-photo);
+}
+#app::after{
+  content:"";
+  position:fixed;inset:0;pointer-events:none;z-index:5;
+  background-image:radial-gradient(rgba(0,0,0,0.02) 1px, transparent 1px);
+  background-size:3px 3px;
+  mix-blend-mode:multiply;
+}
+.left-column{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
+header{
+  flex:none;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  padding:0.6rem 1.4rem 0.9rem;
+  border-bottom:2px dashed var(--line);
+  background:linear-gradient(180deg, rgba(255,183,3,0.09), rgba(255,183,3,0) 85%);
+  box-shadow:0 4px 14px rgba(30,20,10,0.05);
+  position:relative;
+  z-index:2;
+}
+.brand{display:flex;align-items:center;gap:0.7rem;}
+.brand h1{
+  font-family:var(--font-display);
+  font-weight:700;
+  font-size:1.7rem;
+  margin:0;
+  color:var(--gold-dim);
+  letter-spacing:0.01em;
+  display:inline-block;
+}
+#btnDarkMode{
+  border:1px solid var(--line);
+  background:var(--bg-panel-2);
+  color:var(--ink);
+  width:2.2rem;height:2.2rem;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  font-size:1rem;
+  flex:none;
+  transition:background .15s ease, transform .1s ease;
+}
+#btnDarkMode:hover{background:var(--bg-panel-3);}
+#btnDarkMode:active{transform:scale(0.92);}
+.header-stats{display:flex;flex-direction:column;align-items:center;line-height:1.05;user-select:none;-webkit-user-select:none;}
+#statPoints{
+  font-family:var(--font-num);
+  font-weight:700;
+  font-size:2rem;
+  color:var(--ink);
+}
+#statCurrencyLabel{
+  font-size:0.75rem;
+  color:var(--gold-dim);
+  text-transform:uppercase;
+  letter-spacing:0.12em;
+  font-weight:700;
+}
+#statPerSecond{font-family:var(--font-num);font-size:0.85rem;color:var(--ink);margin-top:0.1rem;font-weight:600;}
+.main-layout{flex:1;min-height:0;display:flex;gap:0;}
+.click-stage{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  padding:1rem;
+  gap:0.9rem;
+}
+.click-stage-inner{position:relative;display:flex;flex-direction:column;align-items:center;}
+#mainClickable{
+  width:min(51vh, 55vw, 24rem);
+  height:min(51vh, 55vw, 24rem);
+  border-radius:50%;
+  border:none;
+  cursor:pointer;
+  position:relative;
+  background:radial-gradient(circle at 50% 40%, var(--chalkboard) 0%, var(--chalkboard-dark) 100%);
+  box-shadow:
+    0 0 0 0.6rem #ffffff,
+    0 0 0 0.85rem #e8e8e8,
+    0 0 0 1.1rem rgba(255,183,3,0.18),
+    0 1.6rem 3.2rem var(--shadow),
+    inset 0 -0.6rem 1.4rem rgba(0,0,0,0.45),
+    inset 0 0.6rem 1.4rem rgba(255,255,255,0.05);
+  transition:transform .1s ease;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+#mainClickable:hover{filter:brightness(1.08);}
+#mainClickable.clicked{animation:clickBounce 0.15s ease-out;}
+@keyframes clickBounce{
+  0%{transform:scale(1);}
+  50%{transform:scale(0.94);}
+  100%{transform:scale(1);}
+}
+body.reduce-motion #mainClickable.clicked{animation:none;}
+.botby-face{width:64%;height:64%;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.4));}
+.botby-face .window{animation:blink 4.2s ease-in-out infinite;}
+.botby-face .flag-wave{transform-origin:150px 22px;animation:flagwave 2.4s ease-in-out infinite;}
+body.reduce-motion .botby-face .window{animation:none;}
+body.reduce-motion .botby-face .flag-wave{animation:none;}
+@keyframes blink{
+  0%,92%,100%{opacity:1;}
+  95%{opacity:0.3;}
+}
+@keyframes flagwave{
+  0%,100%{transform:rotate(0deg);}
+  50%{transform:rotate(-8deg);}
+}
+img.custom-photo{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+}
+#clickableDescription{max-width:24rem;text-align:center;font-size:0.95rem;font-family:var(--font-body);font-weight:600;color:var(--ink);opacity:0.75;margin:0;}
+#floatLayer{position:absolute;inset:0;pointer-events:none;overflow:visible;}
+.float-num{
+  position:absolute;
+  font-family:var(--font-display);
+  font-weight:700;
+  color:var(--gold-dim);
+  text-shadow:0 2px 6px rgba(0,0,0,0.15);
+  animation:floatUp 0.8s ease-out forwards;
+  user-select:none;
+  -webkit-user-select:none;
+  --tilt:0deg;
+}
+@keyframes floatUp{
+  0%{opacity:1; transform:translateY(0) scale(0.9) rotate(0deg);}
+  100%{opacity:0; transform:translateY(-3.2rem) scale(1) rotate(var(--tilt));}
+}
+body.reduce-motion .float-num{animation:floatUpReduced 0.8s ease-out forwards;}
+@keyframes floatUpReduced{0%{opacity:1;}80%{opacity:1;}100%{opacity:0;}}
+#eventBanner{
+  max-width:26rem;
+  text-align:center;
+  font-size:0.85rem;
+  font-weight:700;
+  font-family:var(--font-body);
+  color:var(--ink);
+  background:var(--teal);
+  padding:0.5rem 1rem;
+  border-radius:999px;
+  box-shadow:0 6px 16px var(--shadow);
+  transition:opacity .2s ease, transform .2s ease;
+}
+#eventBanner.hidden{opacity:0;transform:translateY(-6px);}
+.side-panel{
+  flex:none;
+  width:26rem;
+  max-width:42vw;
+  border-left:2px dashed var(--line);
+  background-color:var(--bg-panel);
+  background-image:radial-gradient(rgba(0,0,0,0.045) 1px, transparent 1.4px);
+  background-size:14px 14px;
+  box-shadow:-10px 0 26px rgba(30,20,10,0.06);
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
+.tab-bar{flex:none;display:flex;border-bottom:1px solid var(--line);}
+.tab-btn{
+  flex:1;
+  border:none;
+  background:transparent;
+  color:var(--ink);
+  opacity:0.55;
+  font-family:var(--font-display);
+  font-weight:500;
+  font-size:0.82rem;
+  padding:0.75rem 0.3rem;
+  cursor:pointer;
+  border-bottom:2px solid transparent;
+  transition:opacity .15s ease, border-color .15s ease, background .15s ease;
+}
+.tab-btn:hover{opacity:0.85;background:rgba(0,0,0,0.03);}
+.tab-btn.active{opacity:1;color:var(--gold-dim);border-bottom-color:var(--coral);background:rgba(0,0,0,0.03);}
+.tab-panel{display:none;flex-direction:column;min-height:0;flex:1;overflow-y:auto;padding:0.9rem;gap:0.7rem;}
+.tab-panel.active{display:flex;}
+.section-label{
+  font-family:var(--font-display);
+  font-size:0.9rem;
+  font-weight:700;
+  color:var(--gold-dim);
+  margin:0.3rem 0 0.1rem;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.item-card{
+  display:flex;
+  align-items:center;
+  gap:0.7rem;
+  width:100%;
+  text-align:left;
+  border:1px solid var(--line);
+  background:var(--cream);
+  border-radius:0.6rem;
+  padding:0.6rem 0.7rem 0.6rem 0.7rem;
+  color:var(--ink);
+  cursor:pointer;
+  position:relative;
+  box-shadow:0 2px 6px var(--shadow);
+  transition:transform .12s ease, box-shadow .2s ease, filter .2s ease;
+  margin-top:0.35rem;
+}
+.item-card:not(.disabled-card):hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 0 2px var(--gold), 0 8px 16px var(--shadow);
+  filter:brightness(1.02);
+}
+.item-card:not(.disabled-card):active{transform:translateY(0) scale(0.98);filter:brightness(1.0);}
+body.reduce-motion .item-card:not(.disabled-card):hover{transform:none;}
+.item-card:disabled{opacity:0.5;cursor:not-allowed;filter:grayscale(0.35);}
+.item-card.disabled-card{opacity:0.5;cursor:not-allowed;filter:grayscale(0.35);}
+.item-thumb{
+  width:2.7rem;height:2.7rem;
+  border-radius:0.6rem;
+  flex:none;
+  background:var(--bg-panel-3);
+  overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.item-thumb:has(img){padding:0;}
+.item-thumb:not(:has(img)){padding:0.45rem;}
+.item-thumb svg{width:100%;height:100%;display:block;animation:idleSway 3.6s ease-in-out infinite;}
+body.reduce-motion .item-thumb svg{animation:none;}
+@keyframes idleSway{
+  0%,100%{transform:rotate(-3deg);}
+  50%{transform:rotate(3deg);}
+}
+.item-body{flex:1;min-width:0;}
+.item-name{font-family:var(--font-display);font-weight:600;font-size:0.9rem;margin:0 0 0.1rem;color:var(--coral-dim);}
+.item-name.hand{font-family:var(--font-display);font-weight:600;font-size:0.95rem;margin:0 0 0.2rem;line-height:1.2;color:var(--ink);}
+.item-card.staff,
+.item-card.compact{padding-top:0.7rem;padding-bottom:0.7rem;align-items:center;}
+.item-card.staff .item-thumb,
+.item-card.compact .item-thumb{width:3.1rem;height:3.1rem;}
+.item-desc{font-size:0.72rem;color:var(--ink);opacity:0.72;margin:0 0 0.25rem;line-height:1.3;}
+.item-meta{font-family:var(--font-num);font-size:0.72rem;color:var(--teal-dim);margin:0;font-weight:600;}
+.item-count-badge{
+  position:absolute;top:-0.4rem;right:-0.4rem;
+  background:var(--coral);color:#fff;
+  font-family:var(--font-num);font-weight:700;font-size:0.72rem;
+  min-width:1.5rem;height:1.5rem;border-radius:999px;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--bg-panel);
+}
+.mini-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(7.2rem,1fr));gap:1rem;padding:0.4rem 0.2rem 1rem;}
+.mini-card{
+  position:relative;
+  background:var(--cream);
+  color:var(--ink);
+  padding:0.5rem 0.5rem 1.1rem;
+  border-radius:0.5rem;
+  border:1px solid var(--line);
+  box-shadow:0 4px 10px var(--shadow);
+  transition:transform .15s ease;
+}
+.mini-card:hover{transform:translateY(-2px);}
+.mini-card.locked{filter:grayscale(1) brightness(0.9);opacity:0.7;}
+.mini-card .mini-icon{
+  width:100%;aspect-ratio:1/1;border-radius:0.4rem;
+  background:var(--bg-panel-2);
+  display:flex;align-items:center;justify-content:center;
+  padding:1rem;
+}
+.mini-card .mini-icon svg{width:100%;height:100%;}
+.mini-card-name{font-family:var(--font-display);font-weight:600;font-size:0.82rem;margin-top:0.4rem;text-align:center;}
+.mini-card-desc{font-size:0.65rem;text-align:center;opacity:0.7;margin-top:0.15rem;}
+.stats-row{display:flex;justify-content:space-between;padding:0.5rem 0.2rem;border-bottom:1px dashed var(--line);font-size:0.85rem;}
+.stats-row span:last-child{font-family:var(--font-num);color:var(--gold-dim);font-weight:600;}
+.prestige-box{
+  margin-top:0.8rem;padding:0.9rem;border-radius:0.8rem;
+  background:linear-gradient(160deg, rgba(232,178,61,0.1), rgba(79,174,140,0.06));
+  border:1px solid var(--line);
+}
+#prestigeInfo{font-size:0.8rem;opacity:0.85;margin:0 0 0.7rem;line-height:1.4;}
+.prestige-progress{position:relative;width:100%;height:1.1rem;border-radius:999px;background:var(--bg-panel-3);border:1px solid var(--line);overflow:hidden;margin:0 0 0.7rem;}
+.prestige-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));transition:width 0.3s ease;}
+.prestige-progress-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:600;color:var(--ink);}
+.btn-primary{
+  font-family:var(--font-display);font-weight:600;font-size:0.85rem;
+  border:none;border-radius:0.6rem;padding:0.55rem 1.1rem;
+  background:var(--gold);
+  color:#2b2118;cursor:pointer;
+  transition:filter .15s ease;
+}
+.btn-primary:hover:not(:disabled){filter:brightness(1.08);}
+.btn-primary:disabled{opacity:0.35;cursor:not-allowed;}
+.btn-danger{background:var(--coral-dim);color:#fff;}
+.danger-box{
+  margin-top:0.8rem;padding:0.9rem;border-radius:0.8rem;
+  background:linear-gradient(160deg, rgba(224,56,74,0.1), rgba(224,56,74,0.04));
+  border:1px solid var(--line);
+}
+.danger-box p{font-size:0.8rem;opacity:0.85;margin:0 0 0.7rem;line-height:1.4;}
+.stats-subhead{
+  font-family:var(--font-display);font-weight:600;font-size:0.8rem;
+  color:var(--gold-dim);margin:0.9rem 0 0.2rem;text-transform:uppercase;letter-spacing:0.06em;
+}
+#infoText{
+  flex:1;
+  min-height:12rem;
+  border:1px solid var(--line);
+  border-radius:0.6rem;
+  background:var(--cream);
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-size:0.85rem;
+  line-height:1.6;
+  padding:0.7rem 0.8rem;
+  box-shadow:0 2px 6px var(--shadow);
+  white-space:pre-wrap;
+}
+.staff-stat-row{display:flex;justify-content:space-between;align-items:center;padding:0.35rem 0.2rem;border-bottom:1px dashed var(--line);font-size:0.8rem;gap:0.5rem;}
+.staff-stat-row .ssr-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.staff-stat-row .ssr-owned{font-family:var(--font-num);color:var(--coral-dim);font-weight:600;flex:none;}
+.staff-stat-row .ssr-rate{font-family:var(--font-num);color:var(--gold-dim);font-weight:600;flex:none;min-width:5.5rem;text-align:right;}
+#customTooltip{
+  position:fixed;
+  z-index:120;
+  max-width:19rem;
+  min-width:11rem;
+  background:var(--cream);
+  border:2px solid var(--gold);
+  border-radius:0.9rem;
+  padding:0.85rem 1.05rem;
+  box-shadow:0 14px 34px var(--shadow);
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:1.05rem;
+  line-height:1.35;
+  color:var(--ink);
+  pointer-events:none;
+  opacity:0;
+  transform:translateY(4px) scale(0.98);
+  transition:opacity .12s ease, transform .12s ease;
+}
+#customTooltip.show{opacity:1;transform:translateY(0) scale(1);}
+body.reduce-motion #customTooltip{transition:opacity .12s ease;}
+body.reduce-motion #customTooltip.show{transform:none;}
+#achievementToast{
+  position:fixed;right:1.2rem;bottom:1.2rem;
+  display:flex;align-items:center;gap:0.7rem;
+  background:linear-gradient(120deg, var(--bg-panel), var(--bg-panel-2));
+  border:1px solid var(--gold);border-radius:0.9rem;padding:0.7rem 1rem;
+  box-shadow:0 12px 26px var(--shadow);
+  transform:translateY(1rem);opacity:0;
+  transition:transform .3s ease, opacity .3s ease;
+  z-index:60;
+}
+#achievementToast.show{animation:toastPop 0.55s cubic-bezier(.34,1.56,.64,1) forwards;}
+@keyframes toastPop{
+  0%{transform:translateY(1.2rem) scale(0.9);opacity:0;}
+  60%{transform:translateY(-0.2rem) scale(1.03);opacity:1;}
+  100%{transform:translateY(0) scale(1);opacity:1;}
+}
+body.reduce-motion #achievementToast.show{animation:none;transform:translateY(0);opacity:1;}
+#toastIconWrap{width:2.6rem;height:2.6rem;border-radius:0.5rem;background:var(--bg-panel-3);display:flex;align-items:center;justify-content:center;padding:0.4rem;flex:none;}
+#toastIconWrap svg{width:100%;height:100%;}
+.toast-label{font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold-dim);font-weight:700;}
+#toastName{font-family:var(--font-display);font-weight:600;color:var(--ink);font-size:1rem;}
+@media (max-width: 860px){
+  .main-layout{flex-direction:column;}
+  .side-panel{width:100%;max-width:100%;border-left:none;border-top:2px dashed var(--line);flex:1;}
+  #mainClickable{width:min(30vh,60vw,14rem);height:min(30vh,60vw,14rem);}
+  .click-stage{padding:0.5rem;}
+}
+@media (max-width: 480px){
+  .brand h1{font-size:1.3rem;}
+  #statPoints{font-size:1.4rem;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div class="main-layout">
+
+    <div class="left-column">
+      <header>
+        <div class="brand">
+          <h1 id="gameTitle">Botby Clicker</h1>
+          <button id="btnDarkMode" title="Mörkt läge">🌙</button>
+        </div>
+        <div class="header-stats">
+          <span id="statPerSecond">0/s</span>
+          <span id="statCurrencyLabel">Gul Wilma</span>
+          <span id="statPoints">0</span>
+        </div>
+      </header>
+
+      <section class="click-stage">
+        <div class="click-stage-inner">
+          <button id="mainClickable" title="Click på Botby">
+            <svg class="botby-face" viewBox="0 0 200 200" aria-hidden="true">
+              <line x1="150" y1="20" x2="150" y2="58" stroke="var(--cream)" stroke-width="4" stroke-linecap="round"/>
+              <path class="flag-wave" d="M150 22 L184 31 L150 42 Z" fill="var(--coral)"/>
+              <path d="M18 92 L100 28 L182 92 Z" fill="none" stroke="var(--cream)" stroke-width="5" stroke-linejoin="round"/>
+              <rect x="32" y="92" width="136" height="84" rx="6" fill="none" stroke="var(--cream)" stroke-width="5"/>
+              <rect x="88" y="132" width="24" height="44" rx="3" fill="none" stroke="var(--cream)" stroke-width="4"/>
+              <rect class="window" x="50" y="108" width="20" height="20" rx="3" fill="var(--gold)"/>
+              <rect class="window" x="130" y="108" width="20" height="20" rx="3" fill="var(--gold)"/>
+              <rect class="window" x="50" y="142" width="20" height="18" rx="3" fill="var(--gold)"/>
+              <rect class="window" x="130" y="142" width="20" height="18" rx="3" fill="var(--gold)"/>
+            </svg>
+            <div id="floatLayer"></div>
+          </button>
+        </div>
+        <p id="clickableDescription">Click på Botby för Gul Wilma</p>
+        <div id="eventBanner" class="hidden"></div>
+      </section>
+    </div>
+
+    <aside class="side-panel">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="store">Butik</button>
+        <button class="tab-btn" data-tab="achievements">Minnen</button>
+        <button class="tab-btn" data-tab="stats">Stats</button>
+        <button class="tab-btn" data-tab="info">Info</button>
+      </div>
+
+      <div class="tab-panel active" id="panel-store">
+        <div class="section-label">Personal</div>
+        <div id="buildingList" style="display:flex;flex-direction:column;gap:0.5rem;"></div>
+        <div class="section-label">Uppgraderingar</div>
+        <div id="upgradeList" style="display:flex;flex-direction:column;gap:0.5rem;"></div>
+      </div>
+
+      <div class="tab-panel" id="panel-achievements">
+        <div class="section-label" id="achievementsProgress">Minnen</div>
+        <div id="achievementList" class="mini-card-grid"></div>
+      </div>
+
+      <div class="tab-panel" id="panel-stats">
+        <div class="section-label">Stats</div>
+        <div id="statsPanel"></div>
+        <div class="prestige-box">
+          <p id="prestigeInfo">mera Gul Wilma behövs för att låsa upp ett nytt läsår.</p>
+          <div class="prestige-progress" id="prestigeProgress">
+            <div class="prestige-progress-fill" id="prestigeProgressFill"></div>
+            <span class="prestige-progress-label" id="prestigeProgressLabel">0%</span>
+          </div>
+          <button id="btnPrestige" class="btn-primary" disabled>Starta nytt läsår</button>
+        </div>
+        <div class="danger-box">
+          <p>Starta om hela spelet från noll — all personal, alla uppgraderingar, minnen och Nya ämnen försvinner permanent.</p>
+          <button id="btnRestart" class="btn-primary btn-danger">Starta om allting, allting försvinner</button>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="panel-info">
+        <div class="section-label">Info</div>
+        <div id="infoText"></div>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<div id="achievementToast" class="hidden">
+  <div id="toastIconWrap"></div>
+  <div>
+    <div class="toast-label">Nytt minne</div>
+    <div id="toastName">—</div>
+  </div>
+</div>
+
+<script>
+const GAME_SETTINGS = {
+  gameTitle: "Botby Clicker",
+  currencyNameSingular: "Gul Wilma",
+  currencyNamePlural: "Gul Wilma",
+  currencyAbbrev: "GW",
+  prestigeCurrencyName: "Nya ämnen",
+  saveKey: "botbyClickerSave_v7",
+  autosaveIntervalSec: 8,
+  tickIntervalMs: 200,
+};
+
+const mainClickable = {
+  name: "Botby",
+  description: "Clicka på Botby för Gul Wilma",
+  baseClickAmount: 1,
+};
+
+const ICON_COLORS = { gold: "#ffb703", coral: "#ff5d6c", teal: "#12d6a0", blue: "#4cc9f0", purple: "#b185f5", pink: "#ff8fc7", cream: "#faf3e0" };
+const PALETTE = [ICON_COLORS.coral, ICON_COLORS.teal, ICON_COLORS.blue, ICON_COLORS.gold, ICON_COLORS.purple, ICON_COLORS.pink];
+
+const ICONS = {
+  tapper: `<svg viewBox="0 0 48 48"><rect x="18" y="6" width="12" height="24" rx="6" fill="currentColor"/><rect x="14" y="26" width="20" height="14" rx="7" fill="currentColor" opacity="0.85"/><path d="M8 14 L4 10 M8 20 L2 20 M40 14 L44 10 M40 20 L46 20" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>`,
+  helperbot: `<svg viewBox="0 0 48 48"><rect x="10" y="14" width="28" height="22" rx="6" fill="currentColor"/><circle cx="19" cy="25" r="3.2" fill="#1f1330"/><circle cx="29" cy="25" r="3.2" fill="#1f1330"/><rect x="21" y="4" width="6" height="10" rx="3" fill="currentColor"/><circle cx="24" cy="4" r="3" fill="currentColor"/><rect x="14" y="36" width="20" height="5" rx="2.5" fill="currentColor" opacity="0.6"/></svg>`,
+  chargepad: `<svg viewBox="0 0 48 48"><rect x="6" y="34" width="36" height="8" rx="4" fill="currentColor" opacity="0.55"/><path d="M26 4 L14 26 H22 L18 44 L36 18 H27 Z" fill="currentColor"/></svg>`,
+  scrapdrone: `<svg viewBox="0 0 48 48"><circle cx="10" cy="10" r="6" fill="currentColor" opacity="0.6"/><circle cx="38" cy="10" r="6" fill="currentColor" opacity="0.6"/><circle cx="10" cy="38" r="6" fill="currentColor" opacity="0.6"/><circle cx="38" cy="38" r="6" fill="currentColor" opacity="0.6"/><rect x="16" y="16" width="16" height="16" rx="4" fill="currentColor"/><line x1="10" y1="10" x2="18" y2="18" stroke="currentColor" stroke-width="2.5"/><line x1="38" y1="10" x2="30" y2="18" stroke="currentColor" stroke-width="2.5"/><line x1="10" y1="38" x2="18" y2="30" stroke="currentColor" stroke-width="2.5"/><line x1="38" y1="38" x2="30" y2="30" stroke="currentColor" stroke-width="2.5"/></svg>`,
+  assembly: `<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="10" fill="none" stroke="currentColor" stroke-width="4"/><g fill="currentColor"><rect x="21" y="2" width="6" height="8"/><rect x="21" y="38" width="6" height="8"/><rect x="2" y="21" width="8" height="6"/><rect x="38" y="21" width="8" height="6"/></g></svg>`,
+  battery: `<svg viewBox="0 0 48 48"><rect x="6" y="14" width="32" height="20" rx="4" fill="none" stroke="currentColor" stroke-width="4"/><rect x="40" y="20" width="5" height="8" rx="2" fill="currentColor"/><path d="M24 18 L17 25 H22 L20 30 L28 22 H23 Z" fill="currentColor"/></svg>`,
+  signaltower: `<svg viewBox="0 0 48 48"><path d="M24 6 L34 42 H14 Z" fill="none" stroke="currentColor" stroke-width="4"/><path d="M12 18a17 17 0 0 1 24 0 M8 12a24 24 0 0 1 32 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="24" cy="6" r="3" fill="currentColor"/></svg>`,
+  nanoforge: `<svg viewBox="0 0 48 48"><path d="M24 4 L42 15 V33 L24 44 L6 33 V15 Z" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="24" cy="24" r="4" fill="currentColor"/><ellipse cx="24" cy="24" rx="14" ry="6" fill="none" stroke="currentColor" stroke-width="2.5" transform="rotate(30 24 24)"/><ellipse cx="24" cy="24" rx="14" ry="6" fill="none" stroke="currentColor" stroke-width="2.5" transform="rotate(-30 24 24)"/></svg>`,
+  wormhole: `<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3" opacity="0.35"/><circle cx="24" cy="24" r="13" fill="none" stroke="currentColor" stroke-width="3" opacity="0.6"/><circle cx="24" cy="24" r="6" fill="currentColor"/></svg>`,
+  chronocore: `<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="17" fill="none" stroke="currentColor" stroke-width="3.5"/><path d="M24 13 V24 L32 29" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><g fill="currentColor"><rect x="22" y="2" width="4" height="6"/><rect x="22" y="40" width="4" height="6"/></g></svg>`,
+  wrench: `<svg viewBox="0 0 48 48"><path d="M31 6a11 11 0 0 0-14.8 13.6L6 29.8l6.2 6.2 10.2-10.2A11 11 0 0 0 36 11.2l-6.4 6.4-5.2-5.2 6.4-6.4Z" fill="currentColor"/></svg>`,
+  trophy: `<svg viewBox="0 0 48 48"><path d="M14 6h20v10a10 10 0 0 1-20 0Z" fill="currentColor"/><path d="M14 8H6v4a8 8 0 0 0 8 8 M34 8h8v4a8 8 0 0 1-8 8" fill="none" stroke="currentColor" stroke-width="3"/><rect x="21" y="26" width="6" height="8" fill="currentColor"/><rect x="14" y="34" width="20" height="6" rx="2" fill="currentColor"/></svg>`,
+  medal: `<svg viewBox="0 0 48 48"><circle cx="24" cy="28" r="14" fill="currentColor"/><circle cx="24" cy="28" r="8" fill="#1f1330" opacity="0.25"/><path d="M18 16 L10 4 M30 16 L38 4" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></svg>`,
+  target: `<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="18" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="24" cy="24" r="11" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="24" cy="24" r="4" fill="currentColor"/></svg>`,
+  loop: `<svg viewBox="0 0 48 48"><path d="M14 24c0-6 5-10 10-6 2 1.6 4 4 4 4s2-2.4 4-4c5-4 10 0 10 6s-5 10-10 6c-2-1.6-4-4-4-4s-2 2.4-4 4c-5 4-10 0-10-6Z" fill="none" stroke="currentColor" stroke-width="4"/></svg>`,
+  star: `<svg viewBox="0 0 48 48"><path d="M24 3 L29.8 17.6 L45.5 18.7 L33.3 28.8 L37.2 44 L24 35.6 L10.8 44 L14.7 28.8 L2.5 18.7 L18.2 17.6 Z" fill="currentColor"/></svg>`,
+  crown: `<svg viewBox="0 0 48 48"><path d="M6 18 L14 26 L24 10 L34 26 L42 18 L38 38 H10 Z" fill="currentColor"/><rect x="10" y="40" width="28" height="4" rx="1.5" fill="currentColor"/><circle cx="6" cy="15" r="3.2" fill="currentColor"/><circle cx="24" cy="7" r="3.2" fill="currentColor"/><circle cx="42" cy="15" r="3.2" fill="currentColor"/></svg>`,
+  shield: `<svg viewBox="0 0 48 48"><path d="M24 4 L41 10 V22 C41 33 34 41 24 45 C14 41 7 33 7 22 V10 Z" fill="currentColor"/><path d="M16 24 L21.5 30 L33 17" fill="none" stroke="#1f1330" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.4"/></svg>`,
+  blank: `<svg viewBox="0 0 48 48"></svg>`,
+};
+
+function renderIcon(key, color) {
+  const wrap = document.createElement("div");
+  wrap.innerHTML = ICONS[key] || ICONS.blank;
+  wrap.firstElementChild.style.color = color || ICON_COLORS.gold;
+  wrap.firstElementChild.style.width = "100%";
+  wrap.firstElementChild.style.height = "100%";
+  return wrap.firstElementChild;
+}
+
+const buildings = [
+  { id: "b_vaida",   name: "Vaida",             description: "Vaida håller koll på allt som händer i korridorerna.",        baseCost: 15,             baseProduction: 0.1,     unlockAt: 0,           icon: "tapper",      color: ICON_COLORS.coral },
+  { id: "b_tiina",   name: "Tiina",             description: "Tiina hoppar in som vikarie precis när det behövs som mest.", baseCost: 100,            baseProduction: 1,       unlockAt: 50,          icon: "helperbot",   color: ICON_COLORS.teal },
+  { id: "b_stig",    name: "Stig",              description: "Stig fixar allt som går sönder innan någon ens hunnit anmäla det.", baseCost: 350,       baseProduction: 3,       unlockAt: 170,         icon: "wrench",      color: ICON_COLORS.blue },
+  { id: "b_oskar",   name: "Oskar",             description: "Oskar håller kaffet varmt och stämningen på topp.",           baseCost: 1100,           baseProduction: 8,       unlockAt: 550,         icon: "chargepad",   color: ICON_COLORS.gold },
+  { id: "b_kati",    name: "Kati",              description: "Kati driver elevrådet och fixar alltid ihop poäng.",          baseCost: 12000,          baseProduction: 47,      unlockAt: 6000,        icon: "scrapdrone",  color: ICON_COLORS.coral },
+  { id: "b_troels",  name: "Troels",            description: "Troels härskar i lärarrummet och rättar högar av prov.",      baseCost: 130000,         baseProduction: 260,     unlockAt: 65000,       icon: "assembly",    color: ICON_COLORS.teal },
+  { id: "b_guni",    name: "Guni",              description: "Guni sköter skolledningen och skickar oändligt med mejl.",    baseCost: 20000000,       baseProduction: 7800,    unlockAt: 10000000,    icon: "signaltower", color: ICON_COLORS.coral },
+  { id: "b_kent",    name: "Kent",              description: "Kent stämplar papper på rektorsexpeditionen hela dagen.",     baseCost: 330000000,      baseProduction: 44000,   unlockAt: 165000000,   icon: "nanoforge",   color: ICON_COLORS.teal },
+  { id: "b_tommi",   name: "Tommi",             description: "Tommi har kontakter på Skolverket ingen riktigt förstår.",    baseCost: 5100000000,     baseProduction: 260000,  unlockAt: 2550000000,  icon: "wormhole",    color: ICON_COLORS.gold },
+  { id: "b_maija",   name: "Maija",             description: "Maija känner till nästa veckas prov innan någon annan.",      baseCost: 75000000000,    baseProduction: 1600000, unlockAt: 37500000000, icon: "chronocore",  color: ICON_COLORS.coral },
+  { id: "b_kock",           name: "Kock",           description: "Kocken lagar mat till hela skolan utan att någonsin ta rast.",       baseCost: 1000000000000,     baseProduction: 10000000,   unlockAt: 500000000000,     icon: "chargepad",   color: ICON_COLORS.gold },
+  { id: "b_stadeska",       name: "Städerska",      description: "Städerskan håller hela skolan i skick, korridor efter korridor.",     baseCost: 13000000000000,    baseProduction: 68000000,   unlockAt: 6500000000000,    icon: "loop",        color: ICON_COLORS.teal },
+  { id: "b_skolkurator",    name: "Skolkurator",    description: "Skolkuratorn har koll på hela skolan och löser saker innan de blir problem.", baseCost: 170000000000000,   baseProduction: 440000000,  unlockAt: 85000000000000,   icon: "signaltower", color: ICON_COLORS.purple },
+  { id: "b_skolskoterska",  name: "Skolsköterska",  description: "Skolsköterskan fixar allt från huvudvärk till kris, på fem minuter.", baseCost: 2200000000000000,  baseProduction: 2900000000, unlockAt: 1100000000000000, icon: "nanoforge",   color: ICON_COLORS.blue },
+  { id: "b_vaktmastare",    name: "Vaktmästare",    description: "Vaktmästaren har nycklar till precis allting och löser precis allting.", baseCost: 28000000000000000, baseProduction: 19000000000, unlockAt: 14000000000000000, icon: "wrench",      color: ICON_COLORS.coral },
+  { id: "b_rektor",         name: "Rektor",         description: "Rektorn styr hela skolan från sitt kontor, och skolan går liksom av sig själv.", baseCost: 365000000000000000, baseProduction: 125000000000, unlockAt: 180000000000000000, icon: "wormhole",    color: ICON_COLORS.gold },
+];
+
+/* Difficulty pass: the game was flying by way too fast (players hitting
+   tens of millions per second within a couple hours), so buildings past
+   the first three and every upgrade got noticeably pricier, and unlock
+   thresholds got pushed back so new content takes longer to reach. The
+   very first purchase of Vaida, Tiina, and Stig is left untouched so the
+   opening minutes still feel the same - everything after that costs and
+   unlocks later. */
+const BUILDING_COST_SCALE = 7;
+const BUILDING_UNLOCK_SCALE = 4.5;
+buildings.forEach((b, i) => {
+  if (i < 3) return; // Vaida, Tiina, Stig keep their original first-time price
+  b.baseCost = Math.round(b.baseCost * BUILDING_COST_SCALE);
+  b.unlockAt = Math.round(b.unlockAt * BUILDING_UNLOCK_SCALE);
+});
+
+const manualUpgrades = [
+  { id: "u_pencils",     name: "Vässade pennor",               description: "Skarpare stift, snabbare bläck. Dubblar Gul Wilma per click.",  cost: 50,      icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickMultiplier", value: 2 },   unlock: { type: "totalPoints", value: 0 } },
+  { id: "u_recess",      name: "Extra rast",                    description: "Fem extra minuter ute. +2 Gul Wilma per click.",                cost: 150,     icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickFlatBonus", value: 2 },   unlock: { type: "totalPoints", value: 50 } },
+  { id: "u_whiteboard",  name: "Ny skrivtavla",                 description: "Blankt och fräscht. Dubblar Gul Wilma per click.",              cost: 500,     icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickMultiplier", value: 2 },   unlock: { type: "totalPoints", value: 300 } },
+  { id: "u_pizza",       name: "Pizza på fredag",                description: "Hela skolan äter gott samtidigt. +10% produktion.",             cost: 5000,    icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.1 }, unlock: { type: "totalPoints", value: 2000 } },
+  { id: "u_firedrill",   name: "Brandövning",                   description: "Alla ute på tio minuter jämnt. +10% produktion.",   cost: 5000,    icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.1 },   unlock: { type: "totalPoints", value: 3000 } },
+  { id: "u_trip",        name: "Skolresa",                      description: "Hela klassen åker iväg och kommer hem glada. +10 Gul Wilma per click.", cost: 15000, icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickFlatBonus", value: 10 }, unlock: { type: "buildingOwned", targetId: "b_oskar", value: 10 } },
+  { id: "u_printer",     name: "Ny skrivare i kopieringsrummet",description: "Den håller faktiskt papper. +10% produktion.",                  cost: 50000,   icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.1 }, unlock: { type: "totalPoints", value: 20000 } },
+  { id: "u_hallpass",    name: "Hallpass",                       description: "Går förbi alla köer. +10% produktion.",             cost: 50000,   icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.1 },   unlock: { type: "totalPoints", value: 30000 } },
+  { id: "u_wifi",        name: "Läxfri vecka",                  description: "Ingen har läxor på en hel vecka. +15% produktion.",             cost: 500000,  icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.15 }, unlock: { type: "totalPoints", value: 200000 } },
+  { id: "u_examfree",    name: "Provfri vecka",                 description: "Ingen kan riktigt tro det är sant. +15% produktion.", cost: 500000, icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.15 }, unlock: { type: "totalPoints", value: 300000 } },
+  { id: "u_smartboards", name: "Ny väg till Prisma",            description: "Någon hittar en genväg till Prisma. +20% produktion.",          cost: 5000000, icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.2 }, unlock: { type: "totalPoints", value: 2000000 } },
+  { id: "u_routines",    name: "Vikarie",          description: "Lite mindre spring, lite mer koll på läget. +8% produktion.",  cost: 8000,    icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.08 }, unlock: { type: "totalPoints", value: 5000 } },
+  { id: "u_ventilation", name: "God skolmat",  description: "Alla tänker klarare med lite friskare luft. +12% produktion.", cost: 800000,  icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.12 }, unlock: { type: "totalPoints", value: 400000 } },
+  { id: "u_schoolplay",  name: "Skolan slutar tidigare",                    description: "Hela skolan samlas i aulan. +15% produktion.",                  cost: 20000000,      icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.15 }, unlock: { type: "totalPoints", value: 10000000 } },
+  { id: "u_yearbook",    name: "Megis",                         description: "Alla vill skriva en hälsning. +15% produktion.",    cost: 20000000,      icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.15 },   unlock: { type: "buildingOwned", targetId: "b_guni", value: 10 } },
+  { id: "u_sports",      name: "Valfri dag",                    description: "Hela skolan tävlar utomhus. +20% produktion.",                  cost: 100000000,     icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.2 },  unlock: { type: "totalPoints", value: 50000000 } },
+  { id: "u_graduation",  name: "nya toaletter",                     description: "Mössorna åker på. +20% produktion.",                    cost: 100000000,     icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.2 },   unlock: { type: "totalPoints", value: 60000000 } },
+  { id: "u_newroof",     name: "Nya datorer",                      description: "Äntligen tätt när det regnar. +15% produktion.",                cost: 500000000,     icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.15 }, unlock: { type: "totalPoints", value: 250000000 } },
+  { id: "u_sportlov",    name: "Sportlov",                      description: "En hel vecka ledigt mitt i vintern. +20% produktion.",          cost: 500000000,     icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.2 },   unlock: { type: "totalPoints", value: 300000000 } },
+  { id: "u_paskvlov",    name: "Påsklov",                       description: "En vecka ledigt runt påsk ger ny fart åt hela skolan. +15% produktion.", cost: 700000000, icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.15 }, unlock: { type: "totalPoints", value: 400000000 } },
+  { id: "u_hostlov",     name: "Höstlov",                       description: "En vecka ledigt på hösten laddar batterierna. +18% produktion.", cost: 1200000000, icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.18 }, unlock: { type: "totalPoints", value: 700000000 } },
+  { id: "u_jullov",      name: "Jullov",                        description: "Ett par veckor ledigt i december ger hela skolan ny energi. +20% produktion.", cost: 2000000000, icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.2 }, unlock: { type: "totalPoints", value: 1200000000 } },
+  { id: "u_robotics",    name: "Kortare lektioner",                  description: "Eleverna bygger egna robotar. +25% produktion.",                cost: 3000000000,    icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.25 }, unlock: { type: "buildingOwned", targetId: "b_kent", value: 15 } },
+  { id: "u_aiassistant", name: "Längre lunch", description: "Alla klassrum får hjälp dygnet runt. +20% produktion.", cost: 3000000000, icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.2 }, unlock: { type: "totalPoints", value: 2000000000 } },
+  { id: "u_newgym",      name: "Nya bord",               description: "Plats för hela skolan på en gång. +20% produktion.",            cost: 20000000000,   icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.2 },  unlock: { type: "totalPoints", value: 15000000000 } },
+  { id: "u_museum",      name: "Nya stolar",                    description: "Skolans historia på en vägg. +28% produktion.",        cost: 20000000000,   icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.28 },  unlock: { type: "totalPoints", value: 18000000000 } },
+  { id: "u_timecapsule", name: "Skolavslutning",                    description: "Grävs ner för framtiden. +30% produktion.",                     cost: 150000000000,  icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.3 },  unlock: { type: "buildingOwned", targetId: "b_maija", value: 10 } },
+  { id: "u_legacy",      name: "Sommarlov",                    description: "Botby går till historien. +35% produktion, en permanent påminnelse om allt ni byggt ihop.",     cost: 150000000000,  icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.35 },   unlock: { type: "totalPoints", value: 100000000000 } },
+  { id: "u_bibliotek",   name: "Nytt klassrum",               description: "Tysta hörnet blir mysigare. +18% produktion.",                  cost: 4000000,       icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.18 }, unlock: { type: "totalPoints", value: 2500000 } },
+  { id: "u_concert",     name: "unblocked spel på dator",                  description: "Alla trycker upp något att spela. +30 Gul Wilma per click.",   cost: 9000000,       icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickFlatBonus", value: 30 },   unlock: { type: "totalPoints", value: 6000000 } },
+  { id: "u_classphoto",  name: "Klassfoto",                    description: "Alla ler på kommando, tredje försöket. +22% produktion.", cost: 60000000,   icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.22 },   unlock: { type: "totalPoints", value: 40000000 } },
+  { id: "u_gym",         name: "Snabbare bus",               description: "Plats för hela skolan att svettas samtidigt. +20% produktion.", cost: 800000000,     icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.2 },  unlock: { type: "totalPoints", value: 500000000 } },
+  { id: "u_lindgren",    name: "Snabbare metro", description: "Hela mellanstadiet åker på klassresa ihop. +25% produktion.", cost: 8000000000,   icon: "blank", color: ICON_COLORS.teal,  effect: { type: "globalProductionMultiplier", value: 1.25 }, unlock: { type: "totalPoints", value: 5000000000 } },
+  { id: "u_takterrass",  name: "sjuk lärare",   description: "En lugn plats mellan lektionerna. +15% produktion.", cost: 2000000, icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.15 }, unlock: { type: "totalPoints", value: 1200000 } },
+  { id: "u_matteklubb",  name: "Knutkalas", description: "Hela skolan räknar ikapp. +18% produktion.", cost: 15000000, icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.18 }, unlock: { type: "totalPoints", value: 9000000 } },
+  { id: "u_skrivare3d",  name: "Ny kökspersonal", description: "Alla vill skriva ut något konstigt. +22% produktion.", cost: 300000000, icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.22 }, unlock: { type: "totalPoints", value: 180000000 } },
+  { id: "u_elevkar",     name: "nya skåp", description: "Hela skolan dansar tills sent. +28% produktion.", cost: 4000000000, icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.28 }, unlock: { type: "totalPoints", value: 2500000000 } },
+  { id: "u_utbytesresa", name: "Veckoslut",  description: "Ett gäng åker utomlands och kommer hem fyllda av idéer. +32% produktion.", cost: 60000000000, icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.32 }, unlock: { type: "totalPoints", value: 40000000000 } },
+  { id: "u_chatgpt",       name: "ChatGPT på provet",      description: "Ingen vet riktigt hur, men ChatGPT på provet hjälper hela skolan. +20% produktion.", cost: 1200000, icon: "blank", color: ICON_COLORS.gold, effect: { type: "globalProductionMultiplier", value: 1.2 }, unlock: { type: "totalPoints", value: 600000 } },
+  { id: "u_chatgptupdate", name: "Ny chatgpt uppdatering", description: "En uppdatering gör ChatGPT ännu smartare, eller åtminstone snabbare. +18% produktion.", cost: 3000000, icon: "blank", color: ICON_COLORS.gold, effect: { type: "globalProductionMultiplier", value: 1.18 }, unlock: { type: "upgradeBought", targetId: "u_chatgpt" } },
+  { id: "u_prisma",        name: "Prisma",                 description: "Prisma finns liksom överallt. Ingen vet riktigt vad Prisma är. +22% produktion.", cost: 2500000, icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.22 }, unlock: { type: "totalPoints", value: 1200000 } },
+];
+
+/* Balance pass: click upgrades were feeling weak next to the production
+   upgrades, so the existing production-type ("+X% produktion") upgrades
+   above each get a small blanket nerf, and two new, notably stronger
+   click upgrades are added below (kept out of the automatic II/III tier
+   generator via noTiers so this stays "a few new ones", not a flood).
+   Nerf runs BEFORE the new upgrades are appended, so it only touches
+   what was already here. */
+const EXISTING_PRODUCTION_NERF = 0.85; // shaves ~15% off the bonus each existing production upgrade gives
+manualUpgrades.forEach((u) => {
+  if (u.effect.type === "globalProductionMultiplier") {
+    u.effect.value = 1 + (u.effect.value - 1) * EXISTING_PRODUCTION_NERF;
+  }
+});
+
+manualUpgrades.push(
+  // Two new, stronger click upgrades - noTiers so they don't also spin
+  // off automatic II/III follow-ups the way the rest of the list does.
+  { id: "u_megafon",     name: "Klocka i ake",              description: "Botby hörs över hela skolgården nu. Tredubblar Gul Wilma per click.", cost: 2200,    icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickMultiplier", value: 3 },    unlock: { type: "totalPoints", value: 800 },     noTiers: true },
+  { id: "u_guldstjarna", name: "KongStrong",          description: "En stjärna i marginalen gör susen. +60 Gul Wilma per click.",         cost: 1300000, icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickFlatBonus", value: 60 },   unlock: { type: "totalPoints", value: 900000 },   noTiers: true },
+  // Five new production upgrades, also noTiers so the count added to
+  // the store is exactly five, as asked - not fifteen.
+  { id: "u_fikarum",            name: "Nya brandalarm",                       description: "Ett nytt fikarum för personalen. +10% produktion.",        cost: 65000,        icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.10 }, unlock: { type: "totalPoints", value: 40000 },        noTiers: true },
+  { id: "u_digitala_laromedel", name: "Nya skolböcker",            description: "Alla klasser får nya digitala läromedel. +14% produktion.", cost: 17000000,     icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.14 }, unlock: { type: "totalPoints", value: 9000000 },      noTiers: true },
+  { id: "u_elevcafe",           name: "Nya högtalaren",                      description: "Eleverna driver ett eget café i korridoren. +12% produktion.", cost: 350000000,  icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.12 }, unlock: { type: "totalPoints", value: 180000000 },    noTiers: true },
+  { id: "u_ljudanlaggning",     name: "Större skola",             description: "Skolans högtalare hörs äntligen i alla korridorer. +16% produktion.", cost: 6000000000, icon: "blank", color: ICON_COLORS.teal, effect: { type: "globalProductionMultiplier", value: 1.16 }, unlock: { type: "totalPoints", value: 3500000000 }, noTiers: true },
+  { id: "u_nycklar",            name: "Längre raster", description: "Nu kommer han in precis överallt. +18% produktion.", cost: 90000000₀₀, icon: "blank", color： ICON_COLORS.teal, effect： { type： "globalProductionMultiplier", value： 1.18 }, unlock： { type： "totalPoints", value： 5₀₀₀₀₀₀₀₀₀₀ },  noTiers： true }
+);
+
+/* Upgrades kept clustering at identical or near-identical prices (several
+   pairs landed on the exact same cost), which made the store feel flat.
+   This re-spaces every base cost so consecutive prices (once sorted) are
+   always at least MIN_COST_RATIO apart - ties get bumped up just enough
+   to separate, anything already spaced further apart is left alone, so
+   the overall curve keeps its original shape and just loses the flat
+   spots. Runs on the base (pre-scale) costs, before UPGRADE_COST_SCALE
+   is applied below, so scaling preserves the new spacing. */
+const MIN_COST_RATIO = 1.18;
+function dedupeAndSpaceCosts(list, minRatio) {
+  const sorted = [...list].sort((a, b) => a.cost - b.cost || a.id.localeCompare(b.id));
+  let prevCost = 0;
+  sorted.forEach((u) => {
+    const minAllowed = prevCost > 0 ? Math.ceil(prevCost * minRatio) : u.cost;
+    u.cost = Math.max(u.cost, minAllowed);
+    prevCost = u.cost;
+  });
+}
+dedupeAndSpaceCosts(manualUpgrades, MIN_COST_RATIO);
+
+const UPGRADE_COST_SCALE = 8;
+const UPGRADE_UNLOCK_SCALE = 4.5;
+const UPGRADE_BUILDING_UNLOCK_SCALE = 2;
+manualUpgrades.forEach((u) => {
+  u.cost = Math.round(u.cost * UPGRADE_COST_SCALE);
+  if (u.unlock.type === "totalPoints") {
+    u.unlock.value = Math.round(u.unlock.value * UPGRADE_UNLOCK_SCALE);
+  } else if (u.unlock.type === "buildingOwned") {
+    u.unlock.value = Math.round(u.unlock.value * UPGRADE_BUILDING_UNLOCK_SCALE);
+  }
+});
+
+const UPGRADE_LOCAL_PHOTOS = {
+  u_pencils: "pennor",
+  u_recess: "rast",
+  u_whiteboard: "skrivtavla",
+  u_pizza: "pizza",
+  u_firedrill: ["brandövning", "brandovning"],
+  u_trip: ["klassresa", "klassräsa"],
+  u_printer: "printer",
+  u_hallpass: "hallpass",
+  u_wifi: ["läxfri", "laxfri"],
+  u_examfree: "provfri",
+  u_smartboards: "prismaupgrade",
+  u_routines: "vikarie",
+  u_ventilation: "skolmat",
+  u_schoolplay: "hourglass",
+  u_paskvlov: "pasklov",
+  u_legacy: "sommarlov",
+  u_timecapsule: "skolavslutning",
+  u_museum: "nyastolar",
+  u_newgym: "nyabord",
+  u_robotics: "kortarelektioner",
+  u_jullov: "jullov",
+  u_hostlov: "hostlov",
+  u_sportlov: "sportlov",
+  u_newroof: "nydator",
+  u_graduation: "nytoalett",
+  u_sports: "valfri",
+  u_yearbook: "megis",
+  u_bibliotek: "klassrum",
+  u_concert: "unblocked",
+  u_classphoto: "klassfoto",
+  u_gym: "bus",
+  u_lindgren: "hslmetro",
+  u_aiassistant: "lunch",
+  u_takterrass: "takterrass",
+  u_matteklubb: "mattetavling",
+  u_skrivare3d: "skrivare3d",
+  u_elevkar: "elevkarsfest",
+  u_utbytesresa: "utbytesresa",
+
+  // Dessa var tidigare personal (byggnader) - om du redan har bilder som
+  // hette "chatgpt" resp. "prisma" funkar de direkt här också.
+  u_chatgpt: "chatgpt",
+  u_chatgptupdate: "chatgptuppdatering",
+  u_prisma: "prisma",
+
+  // Nya uppgraderingar - lägg en bildfil med exakt något av namnen nedan
+  // (t.ex. "megafon.png") i samma mapp som HTML-filen, precis som för
+  // alla andra uppgraderingar ovan.
+  u_megafon: "megafon",
+  u_guldstjarna: ["guldstjarna", "guldstjärna"],
+  u_fikarum: "fikarum",
+  u_digitala_laromedel: ["digitala_laromedel", "digitalalaromedel", "digitala laromedel"],
+  u_elevcafe: ["elevcafe", "elevcafé"],
+  u_ljudanlaggning: ["ljudanlaggning", "ljudanläggning"],
+  u_nycklar: "nycklar",
+
+  // Ämnen-uppgraderingen och alla ämnesuppgraderingar den låser upp. Varje
+  // ämne har EN bildfil som delas av Sjuans/Åttans/Nians-versionen (samma
+  // ämne, bara olika årskurs) - lägg en bildfil med exakt namnet nedan
+  // (t.ex. "matte.png") i samma mapp som HTML-filen.
+  u_amnen: "amnen",
+  u_sjuan_matte: "matte",
+  u_sjuan_svenska: "svenska",
+  u_sjuan_biologi: "biologi",
+  u_sjuan_religion: "religion",
+  u_sjuan_halsokundskap: "halsokundskap",
+  u_sjuan_kemi: "kemi",
+  u_sjuan_fysik: "fysik",
+  u_sjuan_geografi: "geografi",
+  u_sjuan_historia: "historia", // Historia har medvetet ingen "nia"-uppgradering
+  u_sjuan_engelska: "engelska",
+  u_sjuan_finska: "finska",
+  u_sjuan_move: "move",
+  u_sjuan_skills: "skills",
+  u_sjuan_franska: "franska",
+  u_sjuan_tyska: "tyska",
+  u_sjuan_spanska: "spanska",
+  u_sjuan_musik: "musik",
+  u_sjuan_gymnastik: "gymnastik",
+  u_sjuan_slojd: "slojd",
+  u_sjuan_bildkonst: "bildkonst",
+  u_sjuan_huslig_ekonomi: "husligekonomi",
+};
+
+const STAFF_BOOST_TIER_TEMPLATE = [
+  { suffix: "blir mera effektiv",     costMult: 12,   ownedReq: 2,  value: 1.15 },
+  { suffix: "blir mera effektiv II",  costMult: 65,   ownedReq: 12, value: 1.3 },
+  { suffix: "blir mera effektiv III", costMult: 200,  ownedReq: 22, value: 1.5 },
+  { suffix: "blir mera effektiv IV",  costMult: 500,  ownedReq: 35, value: 2 },
+  { suffix: "blir mera effektiv V",   costMult: 1200, ownedReq: 55, value: 2.5 },
+];
+
+/* One short, per-tier flavor line so five upgrades in a row for the same
+   person don't all read as the identical sentence with a bigger number
+   swapped in. Kept generic enough to fit any staff name. */
+const STAFF_BOOST_TIER_FLAVOR = [
+  "Hittar sin rytm.",
+  "Börjar känna sig hemma i det.",
+  "Har koll utan att ens tänka på det.",
+  "Gör det i sömnen vid det här laget.",
+  "Är helt enkelt bäst på det här.",
+];
+
+function generateStaffBoostUpgrades() {
+  const generated = [];
+  buildings.forEach((b) => {
+    STAFF_BOOST_TIER_TEMPLATE.forEach((tier, idx) => {
+      generated.push({
+        id: `u_boost_${b.id}_${idx + 1}`,
+        name: `${b.name} ${tier.suffix}`,
+        description: `${b.name} blir ${Math.round((tier.value - 1) * 100)}% mer effektiv (kumulativt). ${STAFF_BOOST_TIER_FLAVOR[idx]}`,
+        cost: Math.round(b.baseCost * tier.costMult),
+        icon: b.icon,
+        color: b.color,
+        photoStaffId: b.id,
+        effect: { type: "buildingMultiplier", targetId: b.id, value: tier.value },
+        unlock: { type: "buildingOwned", targetId: b.id, value: tier.ownedReq },
+      });
+    });
+  });
+  return generated;
+}
+
+/* Vaida makes every click a little stronger just by being on staff -
+   see the VAIDA_CLICK_PER_OWNED use in computeClickValue(). On top of
+   that small baseline she has her own ladder of ten click upgrades,
+   gated behind how many Vaidas you've hired. Kept modest on purpose
+   so she never overshadows the rest of the store. */
+const VAIDA_CLICK_PER_OWNED = 0.004;
+
+const VAIDA_CLICK_TEMPLATE = [
+  { numeral: "I",    ownedReq: 2,  cost: 900,          value: 1.05 },
+  { numeral: "II",   ownedReq: 5,  cost: 8000,         value: 1.06 },
+  { numeral: "III",  ownedReq: 9,  cost: 55000,        value: 1.07 },
+  { numeral: "IV",   ownedReq: 15, cost: 320000,       value: 1.08 },
+  { numeral: "V",    ownedReq: 22, cost: 1800000,      value: 1.09 },
+  { numeral: "VI",   ownedReq: 32, cost: 11000000,     value: 1.10 },
+  { numeral: "VII",  ownedReq: 45, cost: 75000000,     value: 1.10 },
+  { numeral: "VIII", ownedReq: 60, cost: 550000000,    value: 1.12 },
+  { numeral: "IX",   ownedReq: 80, cost: 4500000000,   value: 1.12 },
+  { numeral: "X",    ownedReq: 110, cost: 38000000000, value: 1.15 },
+];
+
+function generateVaidaClickUpgrades() {
+  return VAIDA_CLICK_TEMPLATE.map((tier, idx) => ({
+    id: `u_vaida_click_${idx + 1}`,
+    name: `Vaida klickar hårdare ${tier.numeral}`,
+    description: `Vaida lär Botby ett nytt trick. +${Math.round((tier.value - 1) * 100)}% Gul Wilma per click (kumulativt).`,
+    cost: tier.cost,
+    icon: "tapper",
+    color: ICON_COLORS.coral,
+    photoStaffId: "b_vaida",
+    effect: { type: "clickMultiplier", value: tier.value },
+    unlock: { type: "buildingOwned", targetId: "b_vaida", value: tier.ownedReq },
+  }));
+}
+
+/* "Ämnen" is a single, very expensive, one-off gate. Unlike everything in
+   manualUpgrades it does NOT get automatic II/III follow-up tiers - it's
+   added straight into allUpgrades further down instead of into
+   manualUpgrades, so it only ever exists as this one version. It has no
+   direct bonus of its own; its entire purpose is unlocking the SUBJECTS
+   ladder below once bought. */
+const AMNEN_UPGRADE = {
+  id: "u_amnen",
+  name: "Ämnen",
+  description: "Skolan lägger om hela schemat och öppnar upp alla ämnen, från sjuan till nian. Låser upp en helt ny våg av uppgraderingar.",
+  cost: 50000000000000000,
+  icon: "blank",
+  color: ICON_COLORS.gold,
+  effect: { type: "none" },
+  unlock: { type: "totalPoints", value: 20000000000000000 },
+};
+
+/* Every subject below gets three upgrades - Sjuans, Åttans, Nians - except
+   Historia, which stops at Åttans on purpose (no "Nians Historia" exists).
+   A subject's Sjuans-tier unlocks once u_amnen is bought; its Åttans needs
+   that same subject's Sjuans bought first, and its Nians needs that
+   subject's own Åttans. Cost steps up once per subject (SUBJECT_COST_STEP)
+   and again per tier within a subject (costMult below) - the subject step
+   is always bigger than the biggest tier multiplier, so the whole
+   62-upgrade ladder is strictly increasing in exactly the order listed
+   here (the store UI sorts by cost, so that's what keeps them appearing
+   in this order). SUBJECT_BASE_COST is set well above AMNEN_UPGRADE.cost
+   so every single one of these - even the very first, Sjuans Matte -
+   costs more than Ämnen itself; on top of that, buying Ämnen only reveals
+   Sjuans-tier upgrades, so climbing the full ladder takes a good long
+   while of saving up. All three tiers of a subject share one photo (see
+   photoUpgradeId below and the UPGRADE_LOCAL_PHOTOS entries near the
+   top of the file), since they're the same subject at different ages. */
+const SUBJECTS = [
+  { id: "matte",          name: "Matte" },
+  { id: "svenska",        name: "Svenska" },
+  { id: "biologi",        name: "Biologi" },
+  { id: "religion",       name: "Religion" },
+  { id: "halsokundskap",  name: "Hälsokundskap" },
+  { id: "kemi",           name: "Kemi" },
+  { id: "fysik",          name: "Fysik" },
+  { id: "geografi",       name: "Geografi" },
+  { id: "historia",       name: "Historia", noNians: true },
+  { id: "engelska",       name: "Engelska" },
+  { id: "finska",         name: "Finska" },
+  { id: "move",           name: "Move" },
+  { id: "skills",         name: "Skills" },
+  { id: "franska",        name: "Franska" },
+  { id: "tyska",          name: "Tyska" },
+  { id: "spanska",        name: "Spanska" },
+  { id: "musik",          name: "Musik" },
+  { id: "gymnastik",      name: "Gymnastik" },
+  { id: "slojd",          name: "Slöjd" },
+  { id: "bildkonst",      name: "Bildkonst" },
+  { id: "huslig_ekonomi", name: "Huslig ekonomi" },
+];
+
+const SUBJECT_BASE_COST = 100000000000000000; // Sjuans Matte - double AMNEN_UPGRADE.cost, so even the cheapest subject upgrade costs more than Ämnen
+const SUBJECT_COST_STEP = 1.6;                // applied once per subject, in list order above - always bigger than the biggest tier costMult below
+
+const SUBJECT_GRADE_TIERS = [
+  { grade: "sjuan", label: "Sjuans", costMult: 1,    prodValue: 1.05, flavor: "Nytt läsår, nytt schema." },
+  { grade: "attan", label: "Åttans", costMult: 1.15, prodValue: 1.08, flavor: "Redan gamla rutiner nu." },
+  { grade: "nia",   label: "Nians",  costMult: 1.35, prodValue: 1.12, flavor: "Sista året, full fart." },
+];
+
+function generateSubjectUpgrades() {
+  const generated = [];
+  SUBJECTS.forEach((subj, subjIndex) => {
+    const subjectBase = SUBJECT_BASE_COST * Math.pow(SUBJECT_COST_STEP, subjIndex);
+    const rootId = `u_sjuan_${subj.id}`;
+    let previousTierId = null;
+    SUBJECT_GRADE_TIERS.forEach((tier) => {
+      if (subj.noNians && tier.grade === "nia") return;
+      const id = `u_${tier.grade}_${subj.id}`;
+      generated.push({
+        id,
+        name: `${tier.label} ${subj.name}`,
+        description: `${tier.label} ${subj.name}. ${tier.flavor} +${Math.round((tier.prodValue - 1) * 100)}% produktion.`,
+        cost: Math.round(subjectBase * tier.costMult),
+        icon: "blank",
+        color: ICON_COLORS.teal,
+        // Åttans/Nians reuse the same photo as their subject's Sjuans tier
+        // instead of getting their own - see UPGRADE_LOCAL_PHOTOS.
+        photoUpgradeId: id === rootId ? undefined : rootId,
+        effect: { type: "globalProductionMultiplier", value: tier.prodValue },
+        unlock: previousTierId
+          ? { type: "upgradeBought", targetId: previousTierId }
+          : { type: "upgradeBought", targetId: "u_amnen" },
+      });
+      previousTierId = id;
+    });
+  });
+  return generated;
+}
+
+const subjectUpgrades = generateSubjectUpgrades();
+// Only the Sjuans (root) tier of each subject needs its own photo lookup -
+// Åttans/Nians reuse it via photoUpgradeId above.
+const subjectRootUpgrades = subjectUpgrades.filter((u) => !u.photoUpgradeId);
+
+/* Every upgrade in manualUpgrades gets two follow-up tiers: "II" and
+   "III", each a bit stronger and a fair bit pricier than the one
+   before it, unlocked once you've bought the previous tier. Click
+   multipliers stay modest on later passes - most of the extra growth
+   comes from production instead. */
+const TIER_TWO_FOLLOWUPS = {
+  clickMultiplier: [
+    "Nu sitter det i fingrarna.",
+    "Botby har fattat tricket helt.",
+    "Andra gången går lättare.",
+    "Rutin slår in, det märks direkt.",
+  ],
+  clickFlatBonus: [
+    "Lite mer, lite oftare.",
+    "Smulor blir till en hel kaka till slut.",
+    "Ingen enskild grej, bara mer av samma.",
+    "Går fint att vänja sig vid.",
+  ],
+  globalProductionMultiplier: [
+    "Andra vändan känns redan naturlig.",
+    "Ingen ifrågasätter det längre.",
+    "Sitter i väggarna nu.",
+    "Blivit vardag på Botby.",
+  ],
+};
+const TIER_THREE_FOLLOWUPS = {
+  clickMultiplier: [
+    "Tredje gången är charmen.",
+    "Botby gör det utan att tänka nu.",
+    "Helt automatiskt vid det här laget.",
+    "Ingen kommer ens ihåg hur det var innan.",
+  ],
+  clickFlatBonus: [
+    "Har blivit standard, ingen snackar om det längre.",
+    "Tredje omgången, samma fina resultat.",
+    "En del av vardagen på Botby nu.",
+    "Så där ja, perfekt läge.",
+  ],
+  globalProductionMultiplier: [
+    "Tredje varvet - allt flyter på av sig själv.",
+    "Går som smort genom hela skolan.",
+    "Ingen minns hur det funkade innan.",
+    "Helt inarbetat, från källare till vind.",
+  ],
+};
+function hashStr(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
+  return h;
+}
+function makeFollowUpUpgrade(u, { suffix, roman, costMult, clickMultValue, flatBonusMult, prodMultShare, followUps, unlockFrom }) {
+  let effect;
+  if (u.effect.type === "clickMultiplier") {
+    effect = { type: "clickMultiplier", value: clickMultValue };
+  } else if (u.effect.type === "clickFlatBonus") {
+    effect = { type: "clickFlatBonus", value: Math.round(u.effect.value * flatBonusMult) };
+  } else if (u.effect.type === "globalProductionMultiplier") {
+    effect = { type: "globalProductionMultiplier", value: 1 + (u.effect.value - 1) * prodMultShare };
+  } else {
+    effect = u.effect;
+  }
+  const pool = followUps[u.effect.type];
+  const followUp = pool ? pool[hashStr(u.id + suffix) % pool.length] : "";
+  const baseName = u.name.replace(/ (I|II|III)$/, "");
+  return {
+    id: u.id + suffix,
+    name: baseName + " " + roman,
+    description: followUp ? `${u.baseDescription || u.description} ${followUp}` : u.description,
+    baseDescription: u.baseDescription || u.description,
+    cost: Math.round(u.cost * costMult),
+    icon: u.icon,
+    color: u.color,
+    photoUpgradeId: u.rootId || u.id,
+    rootId: u.rootId || u.id,
+    effect,
+    unlock: { type: "upgradeBought", targetId: unlockFrom },
+  };
+}
+function makeTierTwoUpgrade(u) {
+  return makeFollowUpUpgrade(u, {
+    suffix: "_ii", roman: "II", costMult: 5,
+    clickMultValue: 1.5, flatBonusMult: 2.5, prodMultShare: 0.75,
+    followUps: TIER_TWO_FOLLOWUPS, unlockFrom: u.id,
+  });
+}
+function makeTierThreeUpgrade(uTwo) {
+  return makeFollowUpUpgrade(uTwo, {
+    suffix: "_iii", roman: "III", costMult: 6.5,
+    clickMultValue: 1.4, flatBonusMult: 2, prodMultShare: 0.6,
+    followUps: TIER_THREE_FOLLOWUPS, unlockFrom: uTwo.id,
+  });
+}
+
+const POINT_MILESTONES = [
+  [1, "Första poängen", "Tjäna din första Gul Wilma."],
+  [100, "100 Gul Wilma", "Tjäna 100 Gul Wilma totalt."],
+  [1000, "1 000 Gul Wilma", "Tjäna 1 000 Gul Wilma totalt."],
+  [10000, "10 000 Gul Wilma", "Tjäna 10 000 Gul Wilma totalt."],
+  [100000, "100 000 Gul Wilma", "Tjäna 100 000 Gul Wilma totalt."],
+  [1000000, "1 miljon Gul Wilma", "Tjäna 1 000 000 Gul Wilma totalt."],
+  [10000000, "10 miljoner Gul Wilma", "Tjäna 10 000 000 Gul Wilma totalt."],
+  [100000000, "100 miljoner Gul Wilma", "Tjäna 100 000 000 Gul Wilma totalt."],
+  [1000000000, "1 miljard Gul Wilma", "Tjäna 1 000 000 000 Gul Wilma totalt."],
+  [10000000000, "10 miljarder Gul Wilma", "Tjäna 10 000 000 000 Gul Wilma totalt."],
+  [100000000000, "100 miljarder Gul Wilma", "Tjäna 100 000 000 000 Gul Wilma totalt."],
+  [1000000000000, "1 biljon Gul Wilma", "Tjäna 1 000 000 000 000 Gul Wilma totalt."],
+];
+const CLICK_MILESTONES = [
+  [1, "Första clicket", "Click på Botby för första gången."],
+  [100, "100 click", "Click 100 gånger."],
+  [1000, "1 000 click", "Click 1 000 gånger."],
+  [10000, "10 000 click", "Click 10 000 gånger."],
+  [100000, "100 000 click", "Click 100 000 gånger."],
+];
+const TOTAL_UPGRADES_COUNT = manualUpgrades.filter((u) => !u.noTiers).length * 3 + manualUpgrades.filter((u) => u.noTiers).length + buildings.length * STAFF_BOOST_TIER_TEMPLATE.length + VAIDA_CLICK_TEMPLATE.length + 1 + subjectUpgrades.length;
+const UPGRADE_MILESTONES = [
+  [1, "Första uppgraderingen", "Köp din första uppgradering."],
+  [5, "5 uppgraderingar", "Köp 5 uppgraderingar."],
+  [15, "15 uppgraderingar", "Köp 15 uppgraderingar."],
+  [TOTAL_UPGRADES_COUNT, "Alla uppgraderingar", "Köp alla uppgraderingar."],
+];
+const BUILDING_TOTAL_MILESTONES = [
+  [1, "Första i personalen", "Anställ din första i personalen."],
+  [50, "50 i personalen", "Anställ 50 i personalen, totalt."],
+  [200, "200 i personalen", "Anställ 200 i personalen, totalt."],
+  [500, "500 i personalen", "Anställ 500 i personalen, totalt."],
+];
+const PRESTIGE_MILESTONES = [
+  [1, "Nytt läsår", "Starta ett nytt läsår."],
+  [5, "5 läsår", "Starta ett nytt läsår 5 gånger."],
+  [10, "10 läsår", "Starta ett nytt läsår 10 gånger."],
+];
+
+const manualAchievements = [
+  ...POINT_MILESTONES.map(([value, name, description]) => ({
+    id: `a_pts_${value}`, name, description, icon: "trophy", color: ICON_COLORS.gold,
+    requirement: { type: "totalPoints", value },
+  })),
+  ...CLICK_MILESTONES.map(([value, name, description]) => ({
+    id: `a_clk_${value}`, name, description, icon: "star", color: ICON_COLORS.teal,
+    requirement: { type: "clicks", value },
+  })),
+  ...UPGRADE_MILESTONES.map(([value, name, description]) => ({
+    id: `a_upg_${value}`, name, description, icon: "medal", color: ICON_COLORS.coral,
+    requirement: { type: "upgradesBought", value },
+  })),
+  ...BUILDING_TOTAL_MILESTONES.map(([value, name, description]) => ({
+    id: `a_bld_${value}`, name, description, icon: "shield", color: ICON_COLORS.gold,
+    requirement: { type: "buildingOwned", value },
+  })),
+  ...PRESTIGE_MILESTONES.map(([value, name, description]) => ({
+    id: `a_prs_${value}`, name, description, icon: "crown", color: ICON_COLORS.coral,
+    requirement: { type: "prestigeCount", value },
+  })),
+];
+
+function fmtNumber(n) {
+  if (n === null || n === undefined || isNaN(n)) return "0";
+  const sign = n < 0 ? "-" : "";
+  n = Math.abs(n);
+  if (n < 1000) {
+    return sign + (Number.isInteger(n) ? n.toString() : n.toFixed(1));
+  }
+  const suffixes = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
+  let tier = Math.floor(Math.log10(n) / 3);
+  tier = Math.min(tier, suffixes.length - 1);
+  const scaled = n / Math.pow(1000, tier);
+  const formatted = scaled >= 100 ? scaled.toFixed(0) : scaled >= 10 ? scaled.toFixed(1) : scaled.toFixed(2);
+  return sign + formatted + suffixes[tier];
+}
+function fmtRate(n) { return fmtNumber(n); }
+function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+function fmtDuration(ms) {
+  const totalSec = Math.max(0, Math.floor(ms / 1000));
+  const days = Math.floor(totalSec / 86400);
+  const hours = Math.floor((totalSec % 86400) / 3600);
+  const mins = Math.floor((totalSec % 3600) / 60);
+  const secs = totalSec % 60;
+  if (days > 0) return `${days}d ${hours}h ${mins}m`;
+  if (hours > 0) return `${hours}h ${mins}m`;
+  if (mins > 0) return `${mins}m ${secs}s`;
+  return `${secs}s`;
+}
+function fmtPercent(mult) {
+  return (mult >= 1 ? "+" : "") + Math.round((mult - 1) * 100) + "%";
+}
+function fmtDate(ts) {
+  if (!ts) return "—";
+  const d = new Date(ts);
+  const pad = (x) => String(x).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function buildThumb(icon, color, extraClass) {
+  const wrap = document.createElement("div");
+  wrap.className = extraClass || "item-thumb";
+  wrap.appendChild(renderIcon(icon, color));
+  return wrap;
+}
+
+const localAssets = { clickerbutton: null, background: null, staff: {}, upgrades: {} };
+
+function tryLoadLocalImage(path) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const encodedPath = encodeURI(path);
+    img.onload = () => { console.log(`[Botby Clicker] found local image: ${encodedPath}`); resolve(encodedPath); };
+    img.onerror = () => resolve(null);
+    img.src = encodedPath;
+  });
+}
+
+const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "webp"];
+
+function filenameCandidates(base, ext) {
+  const capitalized = base.charAt(0).toUpperCase() + base.slice(1);
+  return [
+    `${base}.${ext}`,
+    `${capitalized}.${ext}`,
+    `${base}.${ext.toUpperCase()}`,
+    `${base.toUpperCase()}.${ext.toUpperCase()}`,
+  ];
+}
+
+function stripDiacritics(str) {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/å/gi, "a").replace(/ä/gi, "a").replace(/ö/gi, "o");
+}
+
+function slugify(str) {
+  return stripDiacritics(str).toLowerCase().replace(/[^a-z0-9]+/g, "");
+}
+
+/* Every upgrade automatically gets a photo slot - no need to hand-add an
+   entry to UPGRADE_LOCAL_PHOTOS for new upgrades. If UPGRADE_LOCAL_PHOTOS
+   has an explicit filename for this id (used for a few of the older
+   upgrades with existing custom names), that's tried first. Either way,
+   it also always tries the upgrade's id (without "u_") and a slugified
+   version of its Swedish name, so a brand new upgrade just works once you
+   drop in a file matching one of those - check the Bildfelsökning panel
+   in Stats to see exactly which filenames it's trying for a given one. */
+function upgradePhotoBases(u) {
+  const explicit = UPGRADE_LOCAL_PHOTOS[u.id];
+  const explicitList = explicit ? (Array.isArray(explicit) ? explicit : [explicit]) : [];
+  const idBase = u.id.replace(/^u_/, "");
+  const nameBase = slugify(u.name);
+  const auto = [idBase, nameBase].filter((b, i, arr) => b && arr.indexOf(b) === i);
+  return [...explicitList, ...auto];
+}
+
+/* Records every filename this attempted and whether one worked, keyed by
+   whatever debugKey the caller passes in (e.g. "u_firedrill"). Shown on
+   screen in the Stats tab so filename mismatches are visible without
+   opening devtools. */
+const imageLoadDebug = {};
+
+async function tryLoadFirstAvailable(baseOrBases, debugKey) {
+  const bases = Array.isArray(baseOrBases) ? baseOrBases : [baseOrBases];
+  const allBases = [];
+  bases.forEach((b) => {
+    if (!allBases.includes(b)) allBases.push(b);
+    const stripped = stripDiacritics(b);
+    if (!allBases.includes(stripped)) allBases.push(stripped);
+  });
+  const tried = [];
+  for (const base of allBases) {
+    for (const ext of IMAGE_EXTENSIONS) {
+      for (const path of filenameCandidates(base, ext)) {
+        tried.push(path);
+        const result = await tryLoadLocalImage(path);
+        if (result) {
+          if (debugKey) imageLoadDebug[debugKey] = { found: result, tried };
+          return result;
+        }
+      }
+    }
+  }
+  console.log(`[Botby Clicker] no local image found for: ${allBases[0]} (fine if you don't have one)`);
+  if (debugKey) imageLoadDebug[debugKey] = { found: null, tried };
+  return null;
+}
+
+async function preloadLocalAssets() {
+  const staffChecks = buildings.map((b) => {
+    const base = b.id.slice(2);
+    return tryLoadFirstAvailable(base, b.id).then((src) => { localAssets.staff[b.id] = src; });
+  });
+  const upgradeChecks = [...manualUpgrades, AMNEN_UPGRADE, ...subjectRootUpgrades].map((u) =>
+    tryLoadFirstAvailable(upgradePhotoBases(u), u.id).then((src) => { localAssets.upgrades[u.id] = src; })
+  );
+  const otherChecks = [
+    tryLoadFirstAvailable("clickerbutton", "clickerbutton").then((src) => { localAssets.clickerbutton = src; }),
+    tryLoadFirstAvailable("background", "background").then((src) => { localAssets.background = src; }),
+  ];
+  await Promise.all([...staffChecks, ...upgradeChecks, ...otherChecks]);
+}
+
+function applyBackgroundPhoto() {
+  const app = document.getElementById("app");
+  if (localAssets.background) {
+    app.style.setProperty("--bg-photo", `url("${localAssets.background}")`);
+    app.classList.add("has-bg-photo");
+  } else {
+    app.classList.remove("has-bg-photo");
+  }
+}
+
+function buildStaffThumb(b) {
+  const wrap = document.createElement("div");
+  wrap.className = "item-thumb";
+  const localSrc = localAssets.staff[b.id];
+  if (localSrc) {
+    const img = document.createElement("img");
+    img.src = localSrc;
+    img.alt = "";
+    img.style.width = "100%";
+    img.style.height = "100%";
+    img.style.objectFit = "cover";
+    img.style.borderRadius = "0.5rem";
+    wrap.appendChild(img);
+  } else {
+    wrap.appendChild(renderIcon(b.icon, b.color));
+  }
+  return wrap;
+}
+
+function buildUpgradeThumb(u) {
+  const wrap = document.createElement("div");
+  wrap.className = "item-thumb";
+  const photoSrc = u.photoStaffId
+    ? localAssets.staff[u.photoStaffId]
+    : localAssets.upgrades[u.photoUpgradeId || u.id];
+  if (photoSrc) {
+    const img = document.createElement("img");
+    img.src = photoSrc;
+    img.alt = "";
+    img.style.width = "100%";
+    img.style.height = "100%";
+    img.style.objectFit = "cover";
+    img.style.borderRadius = "0.5rem";
+    wrap.appendChild(img);
+  } else {
+    wrap.appendChild(renderIcon(u.icon, u.color));
+  }
+  return wrap;
+}
+
+const BUILDING_ACHIEVEMENT_MILESTONES = [1, 10, 25, 50, 100];
+
+function timesWord(n) { return n === 1 ? "gång" : "gånger"; }
+
+function generateBuildingAchievements() {
+  const generated = [];
+  buildings.forEach((b) => {
+    BUILDING_ACHIEVEMENT_MILESTONES.forEach((milestone) => {
+      generated.push({
+        id: `auto_a_${b.id}_m${milestone}`,
+        name: `Anställde ${b.name} ${milestone} ${timesWord(milestone)}`,
+        description: `Anställ ${b.name} totalt ${milestone} ${timesWord(milestone)}.`,
+        icon: b.icon,
+        color: b.color,
+        requirement: { type: "buildingOwned", targetId: b.id, value: milestone },
+      });
+    });
+  });
+  return generated;
+}
+
+const manualUpgradesTierTwo = manualUpgrades.filter((u) => !u.noTiers).map(makeTierTwoUpgrade);
+const manualUpgradesTierThree = manualUpgradesTierTwo.map(makeTierThreeUpgrade);
+
+const allUpgrades = [
+  ...manualUpgrades,
+  ...manualUpgradesTierTwo,
+  ...manualUpgradesTierThree,
+  ...generateVaidaClickUpgrades(),
+  ...generateStaffBoostUpgrades(),
+  AMNEN_UPGRADE,
+  ...subjectUpgrades,
+];
+const achievements = [...manualAchievements, ...generateBuildingAchievements()];
+
+const upgradeById = Object.fromEntries(allUpgrades.map((u) => [u.id, u]));
+const buildingById = Object.fromEntries(buildings.map((b) => [b.id, b]));
+const achievementById = Object.fromEntries(achievements.map((a) => [a.id, a]));
+
+function freshState() {
+  return {
+    points: 0,
+    totalPointsEarned: 0,
+    totalClicks: 0,
+    buildingsOwned: {},
+    upgradesBought: {},
+    achievementsUnlocked: {},
+    bonds: 0,
+    prestigeCount: 0,
+    lastSaveTime: Date.now(),
+    createdAt: Date.now(),
+  };
+}
+
+let state = freshState();
+let pointsPerSecondCache = 0;
+
+function buildingOwnedCount(id) { return state.buildingsOwned[id] || 0; }
+
+function buildingCost(building) {
+  const owned = buildingOwnedCount(building.id);
+  return Math.ceil(building.baseCost * Math.pow(1.19, owned));
+}
+
+/* Multiplicative upgrades compound fast - a handful of "+20% production"
+   upgrades bought together can snowball into something way stronger
+   than any single one felt like it should be. This softens the combined
+   bonus once it passes +200% (i.e. the raw product goes above 3x):
+   everything below that line behaves exactly as before, and only the
+   excess above it grows slower, so no single upgrade purchase ever
+   feels overpowered on its own, but a big pile of them still adds up
+   over time - just more gently. */
+function softenStackedBonus(rawMultiplier) {
+  const bonus = rawMultiplier - 1;
+  const softCap = 2; // +200% combined before softening kicks in
+  if (bonus <= softCap) return rawMultiplier;
+  return 1 + softCap + Math.pow(bonus - softCap, 0.65);
+}
+
+function upgradeGlobalProductionMultiplier() {
+  let mult = 1;
+  Object.keys(state.upgradesBought).forEach((id) => {
+    const u = upgradeById[id];
+    if (u && u.effect.type === "globalProductionMultiplier") mult *= u.effect.value;
+  });
+  return softenStackedBonus(mult);
+}
+
+function upgradeBuildingMultiplier(buildingId) {
+  let mult = 1;
+  Object.keys(state.upgradesBought).forEach((id) => {
+    const u = upgradeById[id];
+    if (u && u.effect.type === "buildingMultiplier" && u.effect.targetId === buildingId) mult *= u.effect.value;
+  });
+  return mult;
+}
+
+function achievementRewardMultiplier(kind) {
+  let mult = 1;
+  Object.keys(state.achievementsUnlocked).forEach((id) => {
+    const a = achievementById[id];
+    if (a && a.reward && a.reward.type === kind) mult *= a.reward.value;
+  });
+  return mult;
+}
+
+/* Every staff member gets stronger each time you buy another one — but
+   the boost per purchase tapers off the more you own, so it never gets
+   silly. The 1st copy gives roughly a 5% boost, and by ~200 owned each
+   additional copy only adds about 0.2%. */
+const GROWTH_RATE_MAX = 0.05;   // boost from the very first purchase
+const GROWTH_RATE_MIN = 0.002;  // boost per purchase once you own a lot
+const GROWTH_DECAY = 40;        // how quickly the boost tapers off
+
+function buildingGrowthMultiplier(building) {
+  const owned = buildingOwnedCount(building.id);
+  let mult = 1;
+  for (let n = 0; n < owned; n++) {
+    const rate = GROWTH_RATE_MIN + (GROWTH_RATE_MAX - GROWTH_RATE_MIN) * Math.exp(-n / GROWTH_DECAY);
+    mult *= 1 + rate;
+  }
+  return mult;
+}
+
+function buildingPerUnitProduction(building) {
+  return building.baseProduction * upgradeBuildingMultiplier(building.id) * buildingGrowthMultiplier(building);
+}
+
+function buildingBaseProduction(building) {
+  return buildingPerUnitProduction(building) * buildingOwnedCount(building.id);
+}
+
+/* "How much of my per-second income does each staff member account
+   for" - deliberately ignores every upgrade (both the per-building
+   "X blir mera effektiv" boosts and the store's global "+X% produktion"
+   upgrades), since those apply on top and would just make every
+   building's share converge toward the same ratios its raw headcount
+   already implies. This is purely: base rate x the automatic per-owned
+   growth bonus x how many are hired - i.e. each person's own natural
+   output, which is what the Stats tab's percentage breakdown uses. */
+function buildingRawProduction(building) {
+  return building.baseProduction * buildingGrowthMultiplier(building) * buildingOwnedCount(building.id);
+}
+
+function computePointsPerSecond() {
+  let total = 0;
+  buildings.forEach((b) => { total += buildingBaseProduction(b); });
+  total *= upgradeGlobalProductionMultiplier();
+  total *= achievementRewardMultiplier("globalProductionMultiplier");
+  total *= 1 + state.bonds * PRESTIGE_BONUS_PER_UNIT;
+  return total;
+}
+
+function computeClickValue() {
+  let val = mainClickable.baseClickAmount;
+  Object.keys(state.upgradesBought).forEach((id) => {
+    const u = upgradeById[id];
+    if (!u) return;
+    if (u.effect.type === "clickFlatBonus") val += u.effect.value;
+  });
+  let mult = 1;
+  Object.keys(state.upgradesBought).forEach((id) => {
+    const u = upgradeById[id];
+    if (u && u.effect.type === "clickMultiplier") mult *= u.effect.value;
+  });
+  mult = softenStackedBonus(mult);
+  mult *= achievementRewardMultiplier("clickMultiplier");
+  mult *= 1 + buildingOwnedCount("b_vaida") * VAIDA_CLICK_PER_OWNED;
+  mult *= 1 + state.bonds * PRESTIGE_BONUS_PER_UNIT;
+  return val * mult;
+}
+
+function isBuildingUnlocked(building) { return state.totalPointsEarned >= (building.unlockAt || 0); }
+
+function isUpgradeUnlocked(upgrade) {
+  const u = upgrade.unlock;
+  if (!u || u.type === "none") return true;
+  if (u.type === "totalPoints") return state.totalPointsEarned >= u.value;
+  if (u.type === "clicks") return state.totalClicks >= u.value;
+  if (u.type === "buildingOwned") return buildingOwnedCount(u.targetId) >= u.value;
+  if (u.type === "upgradeBought") return !!state.upgradesBought[u.targetId];
+  return true;
+}
+
+function checkAchievementRequirement(req) {
+  if (!req) return false;
+  switch (req.type) {
+    case "totalPoints": return state.totalPointsEarned >= req.value;
+    case "clicks": return state.totalClicks >= req.value;
+    case "upgradesBought": return Object.keys(state.upgradesBought).length >= req.value;
+    case "prestigeCount": return state.prestigeCount >= req.value;
+    case "buildingOwned":
+      if (req.targetId) return buildingOwnedCount(req.targetId) >= req.value;
+      return Object.values(state.buildingsOwned).reduce((a, b) => a + b, 0) >= req.value;
+    default: return false;
+  }
+}
+
+function addPoints(amount) {
+  state.points += amount;
+  state.totalPointsEarned += amount;
+}
+
+/* Three small synthesized sound effects - no audio files needed, just
+   quick blips through the Web Audio API. The context is created lazily
+   on first use since browsers won't let audio start before a user
+   gesture, and every one of these always follows a click, so that's
+   never an issue. Each is shaped differently (waveform, pitch curve,
+   and duration) so hiring, upgrading, and clicking Botby feel distinct
+   from each other instead of one sound doing triple duty. */
+let audioCtx = null;
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+
+/* Shared "click" helper used by all three effects below: a short burst
+   of filtered noise (the "tick") plus a low thump underneath (the
+   "body"), same physical-click character as clicking Botby itself -
+   just with different filter pitch, thump weight, and duration per
+   event so hiring, upgrading, and clicking Botby still feel distinct
+   from each other. No musical tones anywhere - everything is a click. */
+function playClickNoise(ctx, startTime, opts) {
+  opts = opts || {};
+  const duration = opts.duration || 0.022;
+  const filterFreq = opts.filterFreq || 2100;
+  const noisePeak = opts.noisePeak || 0.16;
+  const thumpFreq = opts.thumpFreq || 160;
+  const thumpPeak = opts.thumpPeak || 0.055;
+  const thumpDuration = opts.thumpDuration || 0.03;
+
+  const bufferSize = Math.max(1, Math.floor(ctx.sampleRate * duration));
+  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+  }
+  const noise = ctx.createBufferSource();
+  noise.buffer = buffer;
+  const filter = ctx.createBiquadFilter();
+  filter.type = "bandpass";
+  filter.frequency.value = filterFreq;
+  filter.Q.value = 0.7;
+  const noiseGain = ctx.createGain();
+  noiseGain.gain.setValueAtTime(noisePeak, startTime);
+  noiseGain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+  noise.connect(filter);
+  filter.connect(noiseGain);
+  noiseGain.connect(ctx.destination);
+  noise.start(startTime);
+  noise.stop(startTime + duration + 0.01);
+
+  const thump = ctx.createOscillator();
+  const thumpGain = ctx.createGain();
+  thump.type = "sine";
+  thump.frequency.setValueAtTime(thumpFreq, startTime);
+  thumpGain.gain.setValueAtTime(0.0001, startTime);
+  thumpGain.gain.exponentialRampToValueAtTime(thumpPeak, startTime + 0.002);
+  thumpGain.gain.exponentialRampToValueAtTime(0.0001, startTime + thumpDuration);
+  thump.connect(thumpGain);
+  thumpGain.connect(ctx.destination);
+  thump.start(startTime);
+  thump.stop(startTime + thumpDuration + 0.005);
+}
+
+/* Clicking Botby: a light, quiet click - short enough to stay pleasant
+   through a long clicking session instead of getting tiring. */
+function playClickSound() {
+  try {
+    const ctx = getAudioCtx();
+    playClickNoise(ctx, ctx.currentTime, {
+      duration: 0.022, filterFreq: 2100, noisePeak: 0.16,
+      thumpFreq: 160, thumpPeak: 0.055, thumpDuration: 0.03,
+    });
+  } catch (e) { /* audio not available - fine, just skip it */ }
+}
+
+/* Buying an upgrade: a quick double-click - sharper and higher-pitched
+   than a plain click so it reads as "purchase confirmed" rather than
+   the click on Botby itself. */
+function playPopSound() {
+  try {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+    playClickNoise(ctx, now, {
+      duration: 0.02, filterFreq: 2800, noisePeak: 0.18,
+      thumpFreq: 220, thumpPeak: 0.05, thumpDuration: 0.025,
+    });
+    playClickNoise(ctx, now + 0.045, {
+      duration: 0.02, filterFreq: 3100, noisePeak: 0.16,
+      thumpFreq: 260, thumpPeak: 0.045, thumpDuration: 0.025,
+    });
+  } catch (e) { /* audio not available - fine, just skip it */ }
+}
+
+/* Hiring personal: a quick triple-click, lower and a bit heavier than
+   the upgrade sound - a bigger commitment gets a fuller click without
+   turning into a musical chime. */
+function playHireSound() {
+  try {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+    [0, 0.045, 0.09].forEach((offset) => {
+      playClickNoise(ctx, now + offset, {
+        duration: 0.024, filterFreq: 1700, noisePeak: 0.19,
+        thumpFreq: 130, thumpPeak: 0.08, thumpDuration: 0.035,
+      });
+    });
+  } catch (e) { /* audio not available - fine, just skip it */ }
+}
+
+function doClick() {
+  const val = computeClickValue();
+  addPoints(val);
+  state.totalClicks += 1;
+  spawnFloatingNumber(val);
+  bounceMainClickable();
+  playClickSound();
+  checkAchievements();
+  renderTopStats();
+}
+
+function buyBuilding(id) {
+  const b = buildingById[id];
+  if (!b) return;
+  const cost = buildingCost(b);
+  if (state.points < cost) return;
+  state.points -= cost;
+  state.buildingsOwned[id] = buildingOwnedCount(id) + 1;
+  playHireSound();
+  checkAchievements();
+  renderAll();
+}
+
+function buyUpgrade(id) {
+  const u = upgradeById[id];
+  if (!u || state.upgradesBought[id]) return;
+  if (state.points < u.cost) return;
+  state.points -= u.cost;
+  state.upgradesBought[id] = true;
+  playPopSound();
+  checkAchievements();
+  renderAll();
+}
+
+function checkAchievements() {
+  let newlyUnlocked = null;
+  achievements.forEach((a) => {
+    if (state.achievementsUnlocked[a.id]) return;
+    if (checkAchievementRequirement(a.requirement)) {
+      state.achievementsUnlocked[a.id] = true;
+      newlyUnlocked = a;
+    }
+  });
+  if (newlyUnlocked) showAchievementToast(newlyUnlocked);
+}
+
+/* Prestige used to be reachable in a couple hours (1,000,000 total
+   earned for the first star) and each star was worth +2% forever -
+   both were way too generous. The threshold is now vastly higher
+   (1,000,000,000,000 - a trillion - just for the first Nytt ämne), and
+   it uses a cube root instead of a square root, so each additional one
+   after that needs dramatically more too: the 2nd needs 8x the
+   threshold, the 3rd needs 27x, and so on - climbing much slower than
+   before. The payout per unit is also halved (1% instead of 2%), so
+   even once you have a few, the permanent bonus stays reasonable. */
+const PRESTIGE_THRESHOLD = 1000000000000; // 1 trillion Gul Wilma for the 1st Nytt ämne
+const PRESTIGE_BONUS_PER_UNIT = 0.01; // +1% per Nytt ämne, was +2%
+
+function bondsAvailableOnReset() {
+  return Math.floor(Math.cbrt(Math.max(0, state.totalPointsEarned) / PRESTIGE_THRESHOLD));
+}
+
+/* How much more Gul Wilma is needed before the NEXT Nytt ämne kicks in
+   (i.e. before bondsAvailableOnReset() ticks up by one more). */
+function pointsNeededForNextBond() {
+  const currentGain = bondsAvailableOnReset();
+  const nextThreshold = Math.pow(currentGain + 1, 3) * PRESTIGE_THRESHOLD;
+  return Math.max(0, nextThreshold - state.totalPointsEarned);
+}
+
+function doPrestige() {
+  const gained = bondsAvailableOnReset();
+  if (gained < 1) return;
+  const newBonds = state.bonds + gained;
+  const newPrestigeCount = state.prestigeCount + 1;
+  const keptAchievements = state.achievementsUnlocked;
+  state = freshState();
+  state.bonds = newBonds;
+  state.prestigeCount = newPrestigeCount;
+  state.achievementsUnlocked = keptAchievements;
+  saveGame();
+  renderAll();
+}
+
+function saveGame() {
+  state.lastSaveTime = Date.now();
+  try {
+    localStorage.setItem(GAME_SETTINGS.saveKey, JSON.stringify(state));
+  } catch (e) {
+    console.warn("Save failed", e);
+  }
+}
+
+function loadGame() {
+  let raw;
+  try { raw = localStorage.getItem(GAME_SETTINGS.saveKey); } catch (e) { raw = null; }
+  if (!raw) return;
+  try {
+    const loaded = JSON.parse(raw);
+    state = Object.assign(freshState(), loaded);
+    state.buildingsOwned = loaded.buildingsOwned || {};
+    state.upgradesBought = loaded.upgradesBought || {};
+    state.achievementsUnlocked = loaded.achievementsUnlocked || {};
+  } catch (e) {
+    console.warn("Save file was corrupt, starting fresh.", e);
+    state = freshState();
+  }
+}
+
+function spawnFloatingNumber(value) {
+  const layer = document.getElementById("floatLayer");
+  if (!layer) return;
+  const el = document.createElement("div");
+  el.className = "float-num";
+  el.textContent = "+" + fmtNumber(value);
+  el.style.left = (30 + Math.random() * 40) + "%";
+  el.style.top = (30 + Math.random() * 30) + "%";
+  // small random tilt and size wobble so a burst of clicks doesn't look
+  // like the exact same sprite stamped over and over
+  const tilt = (Math.random() * 16 - 8).toFixed(1);
+  const size = (1.0 + Math.random() * 0.25).toFixed(2);
+  el.style.fontSize = size + "rem";
+  el.style.setProperty("--tilt", tilt + "deg");
+  layer.appendChild(el);
+  setTimeout(() => el.remove(), 850);
+}
+
+function bounceMainClickable() {
+  const btn = document.getElementById("mainClickable");
+  if (!btn) return;
+  btn.classList.remove("clicked");
+  void btn.offsetWidth;
+  btn.classList.add("clicked");
+  setTimeout(() => { btn.classList.remove("clicked"); }, 160);
+}
+
+function flashEventBanner(text, durationSec) {
+  const banner = document.getElementById("eventBanner");
+  if (!banner) return;
+  banner.textContent = text;
+  banner.classList.remove("hidden");
+  clearTimeout(banner._timeout);
+  banner._timeout = setTimeout(hideEventBanner, (durationSec || 3.5) * 1000);
+}
+function hideEventBanner() {
+  const banner = document.getElementById("eventBanner");
+  if (banner) banner.classList.add("hidden");
+}
+
+let toastQueue = [];
+let toastShowing = false;
+function showAchievementToast(a) {
+  toastQueue.push(a);
+  if (!toastShowing) drainToastQueue();
+}
+function drainToastQueue() {
+  if (toastQueue.length === 0) { toastShowing = false; return; }
+  toastShowing = true;
+  const a = toastQueue.shift();
+  const toast = document.getElementById("achievementToast");
+  const iconWrap = document.getElementById("toastIconWrap");
+  const nameEl = document.getElementById("toastName");
+  nameEl.textContent = a.name;
+  iconWrap.innerHTML = "";
+  iconWrap.appendChild(renderIcon(a.icon, a.color));
+  toast.classList.remove("hidden");
+  requestAnimationFrame(() => toast.classList.add("show"));
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => { toast.classList.add("hidden"); drainToastQueue(); }, 350);
+  }, 2600);
+}
+
+function renderTopStats() {
+  document.getElementById("statPoints").textContent = fmtNumber(state.points);
+  document.getElementById("statCurrencyLabel").textContent = GAME_SETTINGS.currencyNamePlural;
+  pointsPerSecondCache = computePointsPerSecond();
+  document.getElementById("statPerSecond").textContent = fmtRate(pointsPerSecondCache) + "/s";
+}
+
+function renderMainClickable() {
+  document.getElementById("gameTitle").textContent = GAME_SETTINGS.gameTitle;
+  document.title = GAME_SETTINGS.gameTitle;
+  document.getElementById("clickableDescription").textContent = mainClickable.description;
+
+  const btn = document.getElementById("mainClickable");
+  const svgFace = btn.querySelector("svg.botby-face");
+  let img = btn.querySelector("img.custom-photo");
+  const photoSrc = localAssets.clickerbutton;
+  if (photoSrc) {
+    if (svgFace) svgFace.classList.add("hidden");
+    if (!img) {
+      img = document.createElement("img");
+      img.className = "custom-photo";
+      img.alt = "";
+      btn.insertBefore(img, btn.firstChild);
+    }
+    img.src = photoSrc;
+  } else {
+    if (img) img.remove();
+    if (svgFace) svgFace.classList.remove("hidden");
+  }
+}
+
+/* Short hover-tooltip summary of what a card actually does, instead of
+   its longer flavor description. Built straight from the effect object
+   so it always matches the real numbers (percentages are rounded the
+   same way the rest of the UI rounds them). Used as the title attribute
+   on building and upgrade cards - shown by the browser on hover. */
+function formatEffectTooltip(effect) {
+  if (!effect) return "";
+  switch (effect.type) {
+    case "clickMultiplier":
+      return `+${Math.round((effect.value - 1) * 100)}% mera Gul Wilma per click`;
+    case "clickFlatBonus":
+      return `+${fmtNumber(effect.value)} mera Gul Wilma per click`;
+    case "globalProductionMultiplier":
+      return `+${Math.round((effect.value - 1) * 100)}% mera Gul Wilma`;
+    case "buildingMultiplier": {
+      const target = buildingById[effect.targetId];
+      const name = target ? target.name : "Personalen";
+      return `${name} blir ${Math.round((effect.value - 1) * 100)}% mera effektiv`;
+    }
+    default:
+      return "Låser upp nya uppgraderingar";
+  }
+}
+
+function buildingHoverTooltip(b) {
+  return `+${fmtRate(buildingPerUnitProduction(b))}/s Gul Wilma styck`;
+}
+
+/* Custom hover tooltip, styled like Cookie Clicker's big white info box -
+   a native title attribute can't be styled at all (small, plain, browser-
+   controlled), so this is a real DOM element instead. Shown on
+   mouseenter, positioned just outside the hovered card (to its left when
+   there's room, otherwise flipped to its right so it never runs off the
+   edge of the window), and hidden on mouseleave or on scroll (since a
+   fixed-position tooltip would otherwise drift away from the card it's
+   pointing at). */
+let customTooltipEl = null;
+function getCustomTooltip() {
+  if (!customTooltipEl) {
+    customTooltipEl = document.createElement("div");
+    customTooltipEl.id = "customTooltip";
+    document.body.appendChild(customTooltipEl);
+  }
+  return customTooltipEl;
+}
+function showTooltip(target) {
+  const text = target.dataset.tooltip;
+  if (!text) return;
+  const tip = getCustomTooltip();
+  tip.textContent = text;
+  tip.classList.add("show");
+  positionTooltip(target);
+}
+function positionTooltip(target) {
+  const tip = getCustomTooltip();
+  if (!tip.classList.contains("show")) return;
+  const rect = target.getBoundingClientRect();
+  const tipRect = tip.getBoundingClientRect();
+  const gap = 14;
+  let left = rect.left - tipRect.width - gap;
+  if (left < 8) left = rect.right + gap;
+  left = Math.min(left, window.innerWidth - tipRect.width - 8);
+  let top = rect.top + rect.height / 2 - tipRect.height / 2;
+  top = Math.max(8, Math.min(top, window.innerHeight - tipRect.height - 8));
+  tip.style.left = left + "px";
+  tip.style.top = top + "px";
+}
+function hideTooltip() {
+  if (customTooltipEl) customTooltipEl.classList.remove("show");
+}
+function attachTooltip(el) {
+  el.addEventListener("mouseenter", () => showTooltip(el));
+  el.addEventListener("mouseleave", hideTooltip);
+}
+
+function renderBuildings() {
+  const list = document.getElementById("buildingList");
+  list.innerHTML = "";
+  const unlocked = buildings.filter(isBuildingUnlocked);
+  if (unlocked.length === 0) {
+    list.innerHTML = `<p class="item-desc">Tjäna lite ${GAME_SETTINGS.currencyNamePlural} för att anställa din första i personalen.</p>`;
+    return;
+  }
+  unlocked.forEach((b) => {
+    const owned = buildingOwnedCount(b.id);
+    const cost = buildingCost(b);
+    const affordable = state.points >= cost;
+
+    const btn = document.createElement("button");
+    btn.className = "item-card staff";
+    btn.dataset.id = b.id;
+    btn.disabled = !affordable;
+    btn.dataset.tooltip = buildingHoverTooltip(b);
+    attachTooltip(btn);
+    btn.appendChild(buildStaffThumb(b));
+
+    const body = document.createElement("div");
+    body.className = "item-body";
+    body.innerHTML = `
+      <p class="item-name hand">${escapeHtml(b.name)}</p>
+      <p class="item-meta">${fmtNumber(cost)} ${GAME_SETTINGS.currencyAbbrev} · +${fmtRate(buildingPerUnitProduction(b))}/s styck</p>
+    `;
+    btn.appendChild(body);
+
+    const badge = document.createElement("span");
+    badge.className = "item-count-badge";
+    badge.textContent = owned;
+    btn.appendChild(badge);
+
+    btn.addEventListener("click", () => buyBuilding(b.id));
+    list.appendChild(btn);
+  });
+}
+
+function renderUpgrades() {
+  const list = document.getElementById("upgradeList");
+  list.innerHTML = "";
+  const visible = allUpgrades
+    .filter((u) => !state.upgradesBought[u.id] && isUpgradeUnlocked(u))
+    .sort((a, b) => a.cost - b.cost);
+  if (visible.length === 0) {
+    list.innerHTML = `<p class="item-desc">Inga uppgraderingar tillgängliga än.</p>`;
+    return;
+  }
+  visible.forEach((u) => {
+    const affordable = state.points >= u.cost;
+    const card = document.createElement("div");
+    card.className = "item-card compact" + (affordable ? "" : " disabled-card");
+    card.dataset.id = u.id;
+    card.setAttribute("role", "button");
+    card.setAttribute("tabindex", "0");
+    card.dataset.tooltip = formatEffectTooltip(u.effect);
+    attachTooltip(card);
+    card.appendChild(buildUpgradeThumb(u));
+
+    const body = document.createElement("div");
+    body.className = "item-body";
+    body.innerHTML = `
+      <p class="item-name hand">${escapeHtml(u.name)}</p>
+      <p class="item-meta">${fmtNumber(u.cost)} ${GAME_SETTINGS.currencyAbbrev}</p>
+    `;
+    card.appendChild(body);
+
+    const activate = () => { if (state.points >= u.cost) buyUpgrade(u.id); };
+    card.addEventListener("click", activate);
+    card.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activate(); }
+    });
+    list.appendChild(card);
+  });
+}
+
+/* renderBuildings()/renderUpgrades() tear down and rebuild every card's
+   DOM node from scratch - fine for an actual change (buying something,
+   a new unlock), but doing that every second (which is how often costs/
+   affordability need to refresh) meant every card was a brand new
+   element each second. That silently broke the hover tooltips: browsers
+   only show a native title tooltip after you've held the mouse still
+   over the SAME element for roughly a second, and a card getting
+   replaced out from under the cursor before that timer fires means the
+   tooltip can never appear.
+
+   These two functions do the once-a-second refresh (price, afford-
+   ability, badge count, tooltip text) by updating the existing DOM
+   nodes in place instead of replacing them, using the data-id set on
+   each card above to find them. They only fall back to a full rebuild
+   when the actual set of visible cards has changed (something bought,
+   something newly unlocked) - a full rebuild in that moment is fine
+   since it's an infrequent event, not a once-a-second one. */
+function refreshBuildingCards() {
+  const list = document.getElementById("buildingList");
+  const unlocked = buildings.filter(isBuildingUnlocked);
+  const currentIds = Array.from(list.children).map((el) => el.dataset.id);
+  const targetIds = unlocked.map((b) => b.id);
+  if (currentIds.length !== targetIds.length || currentIds.some((id, i) => id !== targetIds[i])) {
+    renderBuildings();
+    return;
+  }
+  unlocked.forEach((b) => {
+    const btn = list.querySelector(`[data-id="${b.id}"]`);
+    if (!btn) return;
+    const cost = buildingCost(b);
+    const affordable = state.points >= cost;
+    btn.disabled = !affordable;
+    btn.dataset.tooltip = buildingHoverTooltip(b);
+    const meta = btn.querySelector(".item-meta");
+    if (meta) meta.textContent = `${fmtNumber(cost)} ${GAME_SETTINGS.currencyAbbrev} · +${fmtRate(buildingPerUnitProduction(b))}/s styck`;
+    const badge = btn.querySelector(".item-count-badge");
+    if (badge) badge.textContent = buildingOwnedCount(b.id);
+  });
+}
+
+function refreshUpgradeCards() {
+  const list = document.getElementById("upgradeList");
+  const visible = allUpgrades
+    .filter((u) => !state.upgradesBought[u.id] && isUpgradeUnlocked(u))
+    .sort((a, b) => a.cost - b.cost);
+  const currentIds = Array.from(list.children).map((el) => el.dataset.id);
+  const targetIds = visible.map((u) => u.id);
+  if (currentIds.length !== targetIds.length || currentIds.some((id, i) => id !== targetIds[i])) {
+    renderUpgrades();
+    return;
+  }
+  visible.forEach((u) => {
+    const card = list.querySelector(`[data-id="${u.id}"]`);
+    if (!card) return;
+    const affordable = state.points >= u.cost;
+    card.classList.toggle("disabled-card", !affordable);
+    card.dataset.tooltip = formatEffectTooltip(u.effect);
+  });
+}
+
+function renderAchievements() {
+  const list = document.getElementById("achievementList");
+  list.innerHTML = "";
+  const unlockedCount = Object.keys(state.achievementsUnlocked).length;
+  document.getElementById("achievementsProgress").textContent = `Minnen (${unlockedCount} / ${achievements.length})`;
+  achievements.forEach((a) => {
+    const unlocked = !!state.achievementsUnlocked[a.id];
+    const card = document.createElement("div");
+    card.className = "mini-card" + (unlocked ? "" : " locked");
+    const iconBox = document.createElement("div");
+    iconBox.className = "mini-icon";
+    iconBox.appendChild(renderIcon(a.icon, unlocked ? a.color : "#c7c0b2"));
+    card.appendChild(iconBox);
+    const name = document.createElement("div");
+    name.className = "mini-card-name";
+    name.textContent = unlocked ? a.name : "???";
+    card.appendChild(name);
+    const desc = document.createElement("div");
+    desc.className = "mini-card-desc";
+    desc.textContent = unlocked ? a.description : "Fortsätt spela för att låsa upp.";
+    card.appendChild(desc);
+    list.appendChild(card);
+  });
+}
+
+/* Shows each hired staff member's share of the total per-second income,
+   using buildingRawProduction() above (i.e. ignoring upgrades entirely -
+   just base rate, the automatic per-owned growth bonus, and headcount).
+   Percentages are rounded for readability; anything under 0.1% shows as
+   "<0.1%" rather than "0%" so a newly-hired single copy of someone still
+   reads as present instead of invisible. */
+function renderStaffShareSection() {
+  const owned = buildings.filter((b) => buildingOwnedCount(b.id) > 0);
+  const totalRaw = owned.reduce((sum, b) => sum + buildingRawProduction(b), 0);
+  if (owned.length === 0 || totalRaw <= 0) {
+    return `<div class="stats-subhead">Personalens andel av produktionen</div><p class="item-desc">Ingen personal anställd än.</p>`;
+  }
+  const rows = owned
+    .slice()
+    .sort((a, b) => buildingRawProduction(b) - buildingRawProduction(a))
+    .map((b) => {
+      const share = (buildingRawProduction(b) / totalRaw) * 100;
+      const shareText = share < 0.1 ? "<0.1%" : `${share.toFixed(share < 10 ? 1 : 0)}%`;
+      return `<div class="staff-stat-row"><span class="ssr-name">${escapeHtml(b.name)}</span><span class="ssr-owned">${fmtNumber(buildingOwnedCount(b.id))} st</span><span class="ssr-rate">${shareText}</span></div>`;
+    })
+    .join("");
+  return `<div class="stats-subhead">Personalens andel av produktionen (utan uppgraderingar)</div>${rows}`;
+}
+
+function renderStats() {
+  const panel = document.getElementById("statsPanel");
+  const now = Date.now();
+  const runMs = now - (state.createdAt || now);
+  const mostOwnedBuilding = buildings.reduce((best, b) => {
+    const owned = buildingOwnedCount(b.id);
+    return (!best || owned > best.owned) ? { name: b.name, owned } : best;
+  }, null);
+
+  const rows = [
+    ["Läsåret startade", fmtDate(state.createdAt)],
+    ["Tid spelad", fmtDuration(runMs)],
+    ["Gul Wilma totalt", fmtNumber(state.totalPointsEarned)],
+    ["Gul Wilma just nu", fmtNumber(state.points)],
+    ["Antal click", fmtNumber(state.totalClicks)],
+    ["Personal", fmtNumber(Object.values(state.buildingsOwned).reduce((a,b)=>a+b,0))],
+    ["Mest anställda", mostOwnedBuilding && mostOwnedBuilding.owned > 0 ? `${mostOwnedBuilding.name} (${fmtNumber(mostOwnedBuilding.owned)})` : "—"],
+    ["Uppgraderingar köpta", `${fmtNumber(Object.keys(state.upgradesBought).length)} / ${allUpgrades.length}`],
+    ["Minnen", `${Object.keys(state.achievementsUnlocked).length} / ${achievements.length}`],
+    [GAME_SETTINGS.prestigeCurrencyName, fmtNumber(state.bonds)],
+    ["Nya läsår", fmtNumber(state.prestigeCount)],
+    ["Senast sparat", fmtDate(state.lastSaveTime)],
+  ];
+  panel.innerHTML = rows.map(([label, val]) =>
+    `<div class="stats-row"><span>${label}</span><span>${val}</span></div>`
+  ).join("") + renderStaffShareSection();
+
+  const gain = bondsAvailableOnReset();
+  const remaining = pointsNeededForNextBond();
+  document.getElementById("prestigeInfo").textContent =
+    gain > 0
+      ? `Starta ett nytt läsår nu för ${gain} ${GAME_SETTINGS.prestigeCurrencyName}. Varje ger +1% på all Gul Wilma, permanent. ${fmtNumber(remaining)} ${GAME_SETTINGS.currencyAbbrev} till nästa.`
+      : `${fmtNumber(remaining)} ${GAME_SETTINGS.currencyAbbrev} kvar innan du kan starta ett nytt läsår. Varje ${GAME_SETTINGS.prestigeCurrencyName} ger +2% på all Gul Wilma, permanent.`;
+  document.getElementById("btnPrestige").disabled = gain < 1;
+
+  // Progress bar toward the NEXT Nytt ämne tick - same cube-root thresholds
+  // bondsAvailableOnReset()/pointsNeededForNextBond() already use.
+  const currentThreshold = Math.pow(gain, 3) * PRESTIGE_THRESHOLD;
+  const nextThreshold = Math.pow(gain + 1, 3) * PRESTIGE_THRESHOLD;
+  const span = nextThreshold - currentThreshold;
+  const progressFraction = span > 0
+    ? clamp((state.totalPointsEarned - currentThreshold) / span, 0, 1)
+    : 1;
+  document.getElementById("prestigeProgressFill").style.width = `${(progressFraction * 100).toFixed(1)}%`;
+  document.getElementById("prestigeProgressLabel").textContent = `${Math.floor(progressFraction * 100)}%`;
+
+  renderImageDebugPanel();
+}
+
+/* On-screen troubleshooting panel: shows, for every local photo slot,
+   whether an image file was found and — if not — the exact filenames
+   it tried, so filename/extension mismatches are visible without
+   opening devtools. Only relevant entries (upgrades that have a
+   UPGRADE_LOCAL_PHOTOS mapping, plus staff and background/button) are
+   listed. */
+function renderImageDebugPanel() {
+  let box = document.getElementById("imageDebugBox");
+  if (!box) {
+    box = document.createElement("div");
+    box.id = "imageDebugBox";
+    box.style.marginTop = "0.9rem";
+    box.style.padding = "0.7rem 0.8rem";
+    box.style.border = "1px dashed var(--line)";
+    box.style.borderRadius = "0.6rem";
+    box.style.fontSize = "0.72rem";
+    box.style.lineHeight = "1.5";
+    const dangerBox = document.querySelector("#panel-stats .danger-box");
+    dangerBox.parentElement.insertBefore(box, dangerBox.nextSibling);
+  }
+
+  const entries = [
+    ...buildings.map((b) => [b.id, b.name]),
+    ...manualUpgrades.map((u) => [u.id, u.name]),
+    [AMNEN_UPGRADE.id, AMNEN_UPGRADE.name],
+    ...subjectRootUpgrades.map((u) => [u.id, u.name]),
+    ["clickerbutton", "Clickknappen"],
+    ["background", "Bakgrund"],
+  ];
+
+  const rows = entries.map(([key, label]) => {
+    const d = imageLoadDebug[key];
+    if (!d) return `<div><b>${escapeHtml(label)}</b>: väntar…</div>`;
+    if (d.found) {
+      return `<div><b>${escapeHtml(label)}</b>: ✅ hittad (<code>${escapeHtml(d.found)}</code>)</div>`;
+    }
+    const firstFew = d.tried.slice(0, 4).map((p) => `<code>${escapeHtml(p)}</code>`).join(", ");
+    const more = d.tried.length > 4 ? ` … (+${d.tried.length - 4} till)` : "";
+    return `<div><b>${escapeHtml(label)}</b>: ❌ ingen bild hittad. Provade t.ex. ${firstFew}${more}</div>`;
+  });
+
+  box.innerHTML =
+    `<div style="font-family:var(--font-display);font-weight:700;color:var(--gold-dim);margin-bottom:0.3rem;">Bildfelsökning</div>` +
+    `<div style="opacity:0.8;margin-bottom:0.4rem;">Lägg bildfilen i SAMMA mapp som HTML-filen, med exakt något av namnen nedan (skiftläge/ändelse spelar mindre roll).</div>` +
+    rows.join("");
+}
+
+function escapeHtml(str) {
+  if (!str) return "";
+  return str.replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+}
+
+function renderAll() {
+  renderTopStats();
+  renderMainClickable();
+  renderBuildings();
+  renderUpgrades();
+  renderAchievements();
+  renderStats();
+  renderInfo();
+}
+
+function setupTabs() {
+  const buttons = document.querySelectorAll(".tab-btn");
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      buttons.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      document.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("active"));
+      document.getElementById("panel-" + btn.dataset.tab).classList.add("active");
+      hideTooltip();
+    });
+  });
+}
+
+/* The tooltip is fixed-position, anchored to a card's on-screen location
+   at the moment it's shown. Scrolling the store list (or switching tabs,
+   handled above) moves the card without moving the tooltip, so both
+   just hide it outright rather than trying to track the scroll. */
+function setupTooltipDismissal() {
+  document.querySelectorAll(".tab-panel").forEach((panel) => {
+    panel.addEventListener("scroll", hideTooltip, { passive: true });
+  });
+  window.addEventListener("resize", hideTooltip);
+}
+
+function setupClickHandler() {
+  document.getElementById("mainClickable").addEventListener("click", doClick);
+}
+
+function setupPrestige() {
+  document.getElementById("btnPrestige").addEventListener("click", () => {
+    const gain = bondsAvailableOnReset();
+    if (gain < 1) return;
+    if (!confirm(`Starta ett nytt läsår för ${gain} ${GAME_SETTINGS.prestigeCurrencyName}? Minnen sparas.`)) return;
+    doPrestige();
+  });
+}
+
+function doFullRestart() {
+  try {
+    localStorage.removeItem(GAME_SETTINGS.saveKey);
+  } catch (e) {
+    console.warn("Could not clear save", e);
+  }
+  state = freshState();
+  hideEventBanner();
+  renderAll();
+}
+
+function setupRestart() {
+  const btn = document.getElementById("btnRestart");
+  if (!btn) return;
+  btn.addEventListener("click", () => {
+    const sure = confirm(
+      "Är du säker? All personal, alla uppgraderingar, minnen och Nya ämnen försvinner permanent och kan inte återställas."
+    );
+    if (!sure) return;
+    doFullRestart();
+  });
+}
+
+const DARK_MODE_KEY = "botbyClickerDarkMode";
+
+/* The Info tab shows this text as-is - it's fixed in the code, not an
+   in-game text box, so players can't type or save arbitrary content
+   into it. To change what it says, edit the string below directly and
+   re-save the file; that's the only way it changes. Line breaks in the
+   string show up as line breaks on screen. */
+const INFO_NOTE = `Om Botby Clicker
+
+Botby Clicker är ett enkelt clicker-spel där ditt mål är att klicka, tjäna Gul Wilma och köpa upgraderingar för att få mer.
+
+Nya läsår
+
+När du har kommit tillräckligt långt kan du starta ett nytt läsår. Då får du Nya Ämnen, som ger en permanent bonus på Gul Wilma.
+
+Varje Nytt Ämne ger +2% på all Gul Wilma permanent,
+
+Credits & Copyright
+
+Du får använda, ändra och bygga vidare på koden, men du får inte sälja den, tjäna pengar på den eller säga att du själv har skapat originalet.
+
+Botby Clicker är ett självständigt spel. All originalkod och originalinnehåll tillhör skaparen av spelet om inget annat anges.
+
+© 2026 Botby Clicker. Alla rättigheter förbehållna.
+
+Kopiera, distribuera eller använd inte spelets originalinnehåll som om det vore ditt eget.
+
+Tack för att du spelar Botby Clicker ❤️`;
+
+function renderInfo() {
+  const el = document.getElementById("infoText");
+  if (el) el.textContent = INFO_NOTE;
+}
+
+function setupDarkMode() {
+  const btn = document.getElementById("btnDarkMode");
+  let dark = false;
+  try { dark = localStorage.getItem(DARK_MODE_KEY) === "1"; } catch (e) {}
+  applyDarkMode(dark);
+  btn.addEventListener("click", () => {
+    dark = !document.body.classList.contains("dark-mode");
+    applyDarkMode(dark);
+    try { localStorage.setItem(DARK_MODE_KEY, dark ? "1" : "0"); } catch (e) {}
+  });
+}
+
+function applyDarkMode(dark) {
+  document.body.classList.toggle("dark-mode", dark);
+  document.getElementById("btnDarkMode").textContent = dark ? "☀️" : "🌙";
+}
+
+/* Ticks by real elapsed wall-clock time rather than assuming the fixed
+   interval always fires on schedule, so background tabs (where browsers
+   throttle timers to roughly once a second) still accrue Gul Wilma at
+   the correct rate instead of stalling.
+
+   That said, Gul Wilma should only ever be earned while the game is
+   actually running somewhere - open in a tab, foreground or background -
+   never for time the computer was asleep or the browser was fully
+   closed. JS simply doesn't run during that time, so ticks don't fire
+   and no points are added for it automatically; the one place that
+   real-world sleep time WOULD sneak in is the single "catch up" tick
+   fired right when the tab becomes visible again, since Date.now() has
+   jumped forward by however long the computer was actually off/asleep.
+   MAX_TICK_GAP_MS caps how much of that jump can ever be paid out - kept
+   short (well under a minute) so a normal short throttle/hiccup still
+   pays out correctly, but a laptop closed overnight or a browser that
+   was quit doesn't hand out hours of "offline" Gul Wilma on return.
+
+   On top of that: a tab left open in the background (not asleep, not
+   closed - just not the active tab) keeps earning normally for a while,
+   but AFK_LIMIT_MS caps that at 5 minutes. Once the tab has been in the
+   background longer than that, ticks stop adding points (though the
+   game keeps quietly running/saving) until the tab is brought back to
+   the front - that's the moment production picks back up again. */
+let lastTickAt = Date.now();
+const MAX_TICK_GAP_MS = 30 * 1000;
+let backgroundSince = null;
+const AFK_LIMIT_MS = 5 * 60 * 1000;
+function tick() {
+  const now = Date.now();
+  let dtSec = Math.min(now - lastTickAt, MAX_TICK_GAP_MS) / 1000;
+  if (document.hidden && backgroundSince !== null && now - backgroundSince > AFK_LIMIT_MS) {
+    dtSec = 0; // been in the background over 5 min - paused until the tab is reopened
+  }
+  lastTickAt = now;
+  const pps = computePointsPerSecond();
+  if (pps > 0 && dtSec > 0) addPoints(pps * dtSec);
+  checkAchievements();
+  renderTopStats();
+}
+
+async function init() {
+  loadGame();
+  setupTabs();
+  setupTooltipDismissal();
+  setupClickHandler();
+  setupPrestige();
+  setupRestart();
+  setupDarkMode();
+  await preloadLocalAssets();
+  applyBackgroundPhoto();
+  renderAll();
+
+  lastTickAt = Date.now();
+  setInterval(tick, GAME_SETTINGS.tickIntervalMs);
+  setInterval(() => { refreshBuildingCards(); refreshUpgradeCards(); renderStats(); }, 1000);
+  setInterval(saveGame, GAME_SETTINGS.autosaveIntervalSec * 1000);
+  window.addEventListener("beforeunload", saveGame);
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      backgroundSince = Date.now();
+      saveGame();
+    } else {
+      const wasAfk = backgroundSince !== null && Date.now() - backgroundSince > AFK_LIMIT_MS;
+      backgroundSince = null;
+      lastTickAt = Date.now(); // don't pay out for time the tab/computer was closed, asleep, or AFK
+      tick();
+      if (wasAfk) flashEventBanner("Välkommen tillbaka! Produktionen pausades efter 5 minuter borta.", 4);
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
