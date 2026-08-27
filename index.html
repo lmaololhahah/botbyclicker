@@ -772,7 +772,8 @@ buildings.forEach((b, i) => {
   b.baseCost = Math.round(b.baseCost * BUILDING_COST_SCALE);
   b.unlockAt = Math.round(b.unlockAt * BUILDING_UNLOCK_SCALE);
 });
-
+// no upgrades should do more than 20% more gul wilma
+  
 const manualUpgrades = [
   { id: "u_pencils",     name: "Vässade pennor",               description: "Skarpare stift, snabbare bläck. Dubblar Gul Wilma per click.",  cost: 50,      icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickMultiplier", value: 2 },   unlock: { type: "totalPoints", value: 0 } },
   { id: "u_recess",      name: "Extra rast",                    description: "Fem extra minuter ute. +2 Gul Wilma per click.",                cost: 150,     icon: "blank", color: ICON_COLORS.coral, effect: { type: "clickFlatBonus", value: 2 },   unlock: { type: "totalPoints", value: 50 } },
